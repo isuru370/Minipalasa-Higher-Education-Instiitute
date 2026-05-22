@@ -246,7 +246,7 @@
 
                     <td width="70%" class="header-center">
 
-                        <h2>NEXORA HIGHER EDUCATION</h2>
+                        <h2>MINIPALASA HIGHER EDUCATION</h2>
 
                         <h3>Mirigama</h3>
 

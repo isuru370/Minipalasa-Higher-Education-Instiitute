@@ -1,180 +1,226 @@
 @extends('layouts.app')
 
 @section('title', 'Create Admission Payment')
+@section('page-title', 'Create Admission Payment')
 
 @section('content')
 
-    <div class="container py-4">
+<div class="admission-payment-page">
 
-        <div class="card border-0 shadow-sm rounded-4">
-
-            <div class="card-body p-4">
-
-                <h3 class="fw-bold mb-4">
-                    Create Admission Payment
-                </h3>
-
-                <form action="{{ route('admin.admission-payments.store') }}" method="POST">
-
-                    @csrf
-
-                    <div class="row">
-
-                        {{-- STUDENT --}}
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Student
-                            </label>
-
-                            <select name="student_id" class="form-select rounded-4" required>
-
-                                <option value="">Select Student</option>
-
-                                @foreach($students as $student)
-
-                                    <option value="{{ $student->id }}">
-
-                                        {{ $student->custom_id }}
-                                        -
-                                        {{ $student->initial_name }}
-
-                                    </option>
-
-                                @endforeach
-
-                            </select>
-
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="page-hero-card">
+                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                    <div>
+                        <div class="hero-icon">
+                            <i class="bi bi-plus-circle-fill"></i>
                         </div>
-
-                        {{-- ADMISSION --}}
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Admission
-                            </label>
-
-                            <select name="admission_id" id="admissionSelect" class="form-select rounded-4" required>
-
-                                <option value="">
-                                    Select Admission
-                                </option>
-
-                                @foreach($admissions as $admission)
-
-                                    <option value="{{ $admission->id }}" data-amount="{{ $admission->amount }}">
-
-                                        {{ $admission->name }}
-                                        -
-                                        Rs. {{ number_format($admission->amount, 2) }}
-
-                                    </option>
-
-                                @endforeach
-
-                            </select>
-
-                        </div>
-
+                        <h3>Create Admission Payment</h3>
+                        <p>Add a new payment record for a student admission.</p>
                     </div>
 
-                    {{-- AMOUNT --}}
-                    <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                            Amount
-                        </label>
-
-                        <input type="number" step="0.01" name="amount" id="amountInput" class="form-control rounded-4"
-                            readonly>
-
+                    <div class="hero-badge new">
+                        New Record
                     </div>
-
-                    {{-- PAYMENT METHOD --}}
-                    <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                            Payment Method
-                        </label>
-
-                        <select name="payment_method" class="form-select rounded-4">
-
-                            <option value="cash">
-                                Cash
-                            </option>
-
-                            <option value="card">
-                                Card
-                            </option>
-
-                            <option value="bank">
-                                Bank
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    {{-- NOTE --}}
-                    <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                            Note
-                        </label>
-
-                        <textarea name="note" rows="4" class="form-control rounded-4"></textarea>
-
-                    </div>
-
-                    {{-- STATUS --}}
-                    <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                            Status
-                        </label>
-
-                        <select name="status" class="form-select rounded-4">
-                            <option value="pending">Pending</option>
-                            <option value="paid" selected>Paid</option>
-                            <option value="cancelled">Cancelled</option>
-                            <option value="refunded">Refunded</option>
-                        </select>
-
-                    </div>
-
-                    <button class="btn btn-primary rounded-pill px-4">
-                        Save Payment
-                    </button>
-
-                </form>
-
+                </div>
             </div>
-
         </div>
 
+        <div class="col-lg-4">
+            <div class="quick-summary-card">
+                <h6 class="mb-3">Quick Notes</h6>
+
+                <div class="summary-item">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Required fields are marked with *</span>
+                </div>
+
+                <div class="summary-item">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Payment method must match available options</span>
+                </div>
+
+                <div class="summary-item">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Status starts as Paid by default</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {{-- SCRIPT --}}
-    <script>
+    <div class="main-card">
+        <div class="main-card-header">
+            <div>
+                <h4>Payment Details</h4>
+                <p>Fill in the information below to create the payment</p>
+            </div>
+        </div>
 
-        const admissionSelect =
-            document.getElementById('admissionSelect');
+        <form action="{{ route('admin.admission-payments.store') }}" method="POST">
+            @csrf
 
-        const amountInput =
-            document.getElementById('amountInput');
+            @include('admin.admission_payments.partials.form', ['admissionPayment' => null])
 
-        admissionSelect.addEventListener('change', function () {
+            <div class="form-footer">
+                <div class="btn-group-inline">
+                    <a href="{{ route('admin.admission-payments.index') }}" class="btn btn-light border custom-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
 
-            const selectedOption =
-                this.options[this.selectedIndex];
-
-            const amount =
-                selectedOption.getAttribute('data-amount');
-
-            amountInput.value = amount ?? '';
-
-        });
-
-    </script>
-
+                    <button type="submit" class="btn btn-primary custom-btn">
+                        <i class="bi bi-check2-circle"></i>
+                        Save Payment
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
+
+@push('styles')
+<style>
+    .admission-payment-page {
+        animation: fadeIn 0.4s ease;
+    }
+
+    .page-hero-card,
+    .quick-summary-card,
+    .main-card {
+        background: #fff;
+        border: 1px solid #eef2f7;
+        border-radius: 28px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .page-hero-card {
+        padding: 1.5rem;
+        min-height: 100%;
+    }
+
+    .hero-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        margin-bottom: 1rem;
+    }
+
+    .page-hero-card h3 {
+        margin: 0 0 .5rem 0;
+        font-weight: 800;
+    }
+
+    .page-hero-card p {
+        margin: 0;
+        color: #64748b;
+    }
+
+    .hero-badge {
+        padding: .55rem .9rem;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: .82rem;
+        white-space: nowrap;
+    }
+
+    .hero-badge.new {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #dbeafe;
+    }
+
+    .quick-summary-card {
+        padding: 1.5rem;
+        height: 100%;
+    }
+
+    .quick-summary-card h6 {
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item {
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: .75rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        color: #475569;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .summary-item i {
+        color: #2563eb;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+    }
+
+    .main-card {
+        padding: 1.5rem;
+    }
+
+    .main-card-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .main-card-header h4 {
+        margin: 0;
+        font-weight: 800;
+    }
+
+    .main-card-header p {
+        margin: .25rem 0 0 0;
+        color: #64748b;
+    }
+
+    .form-footer {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn-group-inline {
+        display: flex;
+        gap: .75rem;
+    }
+
+    .custom-btn {
+        border-radius: 14px;
+        padding: .8rem 1.4rem;
+        font-weight: 700;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    @media (max-width: 768px) {
+        .page-hero-card,
+        .quick-summary-card,
+        .main-card {
+            border-radius: 22px;
+        }
+
+        .btn-group-inline {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .btn-group-inline .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+@endpush
