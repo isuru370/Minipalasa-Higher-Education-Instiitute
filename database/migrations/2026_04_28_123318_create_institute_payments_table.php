@@ -29,7 +29,6 @@ class CreateInstitutePaymentsTable extends Migration
             // 🔥 type (future ready)
             $table->enum('payment_type', [
                 'expense',
-                'income'
             ])->default('expense');
 
             // status

@@ -10,76 +10,274 @@ class PagesTableSeeder extends Seeder
     public function run(): void
     {
         $pages = [
-            ['name' => 'Dashboard', 'route_name' => 'dashboard', 'module' => 'dashboard'],
-            ['name' => 'Home', 'route_name' => 'home', 'module' => 'dashboard'],
-            ['name' => 'Classes', 'route_name' => 'classes', 'module' => 'class'],
 
-            ['name' => 'System Users - List', 'route_name' => 'system-users.index', 'module' => 'system_users'],
-            ['name' => 'System Users - Create', 'route_name' => 'system-users.create', 'module' => 'system_users'],
-            ['name' => 'System Users - View', 'route_name' => 'system-users.showPage', 'module' => 'system_users'],
-            ['name' => 'System Users - Edit', 'route_name' => 'system-users.edit', 'module' => 'system_users'],
+            /*
+            |--------------------------------------------------------------------------
+            | Dashboard
+            |--------------------------------------------------------------------------
+            */
 
-            ['name' => 'User Types - List', 'route_name' => 'user-types.index', 'module' => 'user_types'],
-            ['name' => 'User Types - Create', 'route_name' => 'user-types.create', 'module' => 'user_types'],
-            ['name' => 'User Types - View', 'route_name' => 'user-types.show', 'module' => 'user_types'],
+            [
+                'name' => 'Dashboard',
+                'route_name' => 'admin.dashboard',
+                'module' => 'dashboard'
+            ],
 
-            ['name' => 'Students - List', 'route_name' => 'students.index', 'module' => 'students'],
-            ['name' => 'Students - Create', 'route_name' => 'students.create', 'module' => 'students'],
-            ['name' => 'Students - Edit', 'route_name' => 'students.edit', 'module' => 'students'],
-            ['name' => 'Students - View', 'route_name' => 'students.show', 'module' => 'students'],
+            /*
+            |--------------------------------------------------------------------------
+            | System Users
+            |--------------------------------------------------------------------------
+            */
 
-            ['name' => 'Class Rooms - List', 'route_name' => 'class_rooms.index', 'module' => 'class_rooms'],
-            ['name' => 'Class Rooms - Create', 'route_name' => 'class_rooms.create', 'module' => 'class_rooms'],
-            ['name' => 'Class Rooms - Schedule', 'route_name' => 'class_rooms.schedule', 'module' => 'class_rooms'],
+            [
+                'name' => 'System Users - List',
+                'route_name' => 'admin.system-users.index',
+                'module' => 'system_users'
+            ],
 
-            ['name' => 'Teachers - List', 'route_name' => 'teachers.index', 'module' => 'teachers'],
-            ['name' => 'Teachers - Create', 'route_name' => 'teachers.create', 'module' => 'teachers'],
-            ['name' => 'Teachers - Edit', 'route_name' => 'teachers.edit', 'module' => 'teachers'],
-            ['name' => 'Teachers - View', 'route_name' => 'teachers.show', 'module' => 'teachers'],
+            [
+                'name' => 'System Users - Create',
+                'route_name' => 'admin.system-users.create',
+                'module' => 'system_users'
+            ],
 
-            ['name' => 'Admissions - List', 'route_name' => 'admissions.index', 'module' => 'admissions'],
+            [
+                'name' => 'System Users - Store',
+                'route_name' => 'admin.system-users.store',
+                'module' => 'system_users'
+            ],
 
-            ['name' => 'Student Payment - Index', 'route_name' => 'student-payment.index', 'module' => 'payments'],
-            ['name' => 'Student Payment - Create', 'route_name' => 'student-payment.create', 'module' => 'payments'],
-            ['name' => 'Student Payment - Details', 'route_name' => 'student-payment.details', 'module' => 'payments'],
+            [
+                'name' => 'System Users - Edit',
+                'route_name' => 'admin.system-users.edit',
+                'module' => 'system_users'
+            ],
 
-            ['name' => 'Student Attendance - Index', 'route_name' => 'student_attendance.index', 'module' => 'attendance'],
-            ['name' => 'Student Attendance - Daily', 'route_name' => 'student_attendance.daily', 'module' => 'attendance'],
-            ['name' => 'Student Attendance - Details', 'route_name' => 'student_attendance.details', 'module' => 'attendance'],
+            [
+                'name' => 'System Users - Update',
+                'route_name' => 'admin.system-users.update',
+                'module' => 'system_users'
+            ],
 
-            ['name' => 'Payment Reason - Index', 'route_name' => 'payment_reason.index', 'module' => 'settings'],
+            [
+                'name' => 'System Users - Delete',
+                'route_name' => 'admin.system-users.destroy',
+                'module' => 'system_users'
+            ],
 
-            ['name' => 'Reports - Index', 'route_name' => 'reports.index', 'module' => 'reports'],
-            ['name' => 'Reports - Daily PDF', 'route_name' => 'reports.daily.pdf', 'module' => 'reports'],
+            /*
+            |--------------------------------------------------------------------------
+            | Students
+            |--------------------------------------------------------------------------
+            */
 
-            ['name' => 'Settings - Index', 'route_name' => 'settings.index', 'module' => 'settings'],
+            [
+                'name' => 'Students - List',
+                'route_name' => 'admin.students.index',
+                'module' => 'students'
+            ],
 
-            ['name' => 'Teacher Payment - Index', 'route_name' => 'teacher_payment.index', 'module' => 'teacher_payments'],
-            ['name' => 'Teacher Payment - Expenses', 'route_name' => 'teacher_payment.expenses', 'module' => 'teacher_payments'],
-            ['name' => 'Teacher Payment - Salary', 'route_name' => 'teacher_payment.salary', 'module' => 'teacher_payments'],
-            ['name' => 'Teacher Payment - History', 'route_name' => 'teacher_payment.history', 'module' => 'teacher_payments'],
-            ['name' => 'Teacher Payment - View', 'route_name' => 'teacher_payment.view', 'module' => 'teacher_payments'],
-            ['name' => 'Teacher Payment - Salary Slip', 'route_name' => 'teacher_payment.salary-slip-exact', 'module' => 'teacher_payments'],
+            [
+                'name' => 'Students - Create',
+                'route_name' => 'admin.students.create',
+                'module' => 'students'
+            ],
 
-            ['name' => 'Institute Payment - Index', 'route_name' => 'institute_payment.index', 'module' => 'institute_payments'],
-            ['name' => 'Institute Payment - Extra Income', 'route_name' => 'institute_payment.extra', 'module' => 'institute_payments'],
-            ['name' => 'Institute Payment - Expenses', 'route_name' => 'institute_payment.expenses', 'module' => 'institute_payments'],
-            ['name' => 'Institute Payment - Ledger', 'route_name' => 'institute_payment.ledger', 'module' => 'institute_payments'],
+            [
+                'name' => 'Students - Store',
+                'route_name' => 'admin.students.store',
+                'module' => 'students'
+            ],
 
-            ['name' => 'Receipt - View', 'route_name' => 'receipt.view', 'module' => 'receipt'],
-            ['name' => 'Receipt - Download', 'route_name' => 'receipt.download', 'module' => 'receipt'],
-            ['name' => 'Receipt - Thermal Print', 'route_name' => 'receipt.thermal-print', 'module' => 'receipt'],
+            [
+                'name' => 'Students - Edit',
+                'route_name' => 'admin.students.edit',
+                'module' => 'students'
+            ],
 
-            ['name' => 'Permission - View', 'route_name' => 'permission.index', 'module' => 'permissions'],
+            [
+                'name' => 'Students - Update',
+                'route_name' => 'admin.students.update',
+                'module' => 'students'
+            ],
 
-            ['name' => 'Exam - View', 'route_name' => 'student_exam.index', 'module' => 'exams'],
-            ['name' => 'Exam - Create', 'route_name' => 'student_exam.create', 'module' => 'exams'],
-            ['name' => 'Exam - Enter Marks', 'route_name' => 'student_exam.enter-marks', 'module' => 'exams'],
+            [
+                'name' => 'Students - View',
+                'route_name' => 'admin.students.show',
+                'module' => 'students'
+            ],
+
+            [
+                'name' => 'Students - Delete',
+                'route_name' => 'admin.students.destroy',
+                'module' => 'students'
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Teachers
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'name' => 'Teachers - List',
+                'route_name' => 'admin.teachers.index',
+                'module' => 'teachers'
+            ],
+
+            [
+                'name' => 'Teachers - Create',
+                'route_name' => 'admin.teachers.create',
+                'module' => 'teachers'
+            ],
+
+            [
+                'name' => 'Teachers - Store',
+                'route_name' => 'admin.teachers.store',
+                'module' => 'teachers'
+            ],
+
+            [
+                'name' => 'Teachers - Edit',
+                'route_name' => 'admin.teachers.edit',
+                'module' => 'teachers'
+            ],
+
+            [
+                'name' => 'Teachers - Update',
+                'route_name' => 'admin.teachers.update',
+                'module' => 'teachers'
+            ],
+
+            [
+                'name' => 'Teachers - View',
+                'route_name' => 'admin.teachers.show',
+                'module' => 'teachers'
+            ],
+
+            [
+                'name' => 'Teachers - Delete',
+                'route_name' => 'admin.teachers.destroy',
+                'module' => 'teachers'
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Organizers
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'name' => 'Organizers - List',
+                'route_name' => 'admin.organizers.index',
+                'module' => 'organizers'
+            ],
+
+            [
+                'name' => 'Organizers - Create',
+                'route_name' => 'admin.organizers.create',
+                'module' => 'organizers'
+            ],
+
+            [
+                'name' => 'Organizers - Store',
+                'route_name' => 'admin.organizers.store',
+                'module' => 'organizers'
+            ],
+
+            [
+                'name' => 'Organizers - Edit',
+                'route_name' => 'admin.organizers.edit',
+                'module' => 'organizers'
+            ],
+
+            [
+                'name' => 'Organizers - Update',
+                'route_name' => 'admin.organizers.update',
+                'module' => 'organizers'
+            ],
+
+            [
+                'name' => 'Organizers - Delete',
+                'route_name' => 'admin.organizers.destroy',
+                'module' => 'organizers'
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Admissions
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'name' => 'Admissions - List',
+                'route_name' => 'admin.admissions.index',
+                'module' => 'admissions'
+            ],
+
+            [
+                'name' => 'Admissions - Create',
+                'route_name' => 'admin.admissions.create',
+                'module' => 'admissions'
+            ],
+
+            [
+                'name' => 'Admissions - Store',
+                'route_name' => 'admin.admissions.store',
+                'module' => 'admissions'
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payments
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'name' => 'Payments',
+                'route_name' => 'admin.payments.index',
+                'module' => 'payments'
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Attendance
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'name' => 'Attendance',
+                'route_name' => 'admin.attendance.index',
+                'module' => 'attendance'
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reports
+            |--------------------------------------------------------------------------
+            */
+
+            [
+                'name' => 'Daily Report',
+                'route_name' => 'admin.daily-report.index',
+                'module' => 'reports'
+            ],
+
+            [
+                'name' => 'Teacher Report',
+                'route_name' => 'admin.teacher-report.index',
+                'module' => 'reports'
+            ],
         ];
 
         foreach ($pages as $page) {
+
             DB::table('pages')->updateOrInsert(
-                ['route_name' => $page['route_name']],
+
+                [
+                    'route_name' => $page['route_name']
+                ],
+
                 [
                     'name' => $page['name'],
                     'module' => $page['module'],
@@ -90,6 +288,8 @@ class PagesTableSeeder extends Seeder
             );
         }
 
-        $this->command->info('✅ Pages seeded successfully!');
+        $this->command->info(
+            '✅ Pages seeded successfully!'
+        );
     }
 }

@@ -57,8 +57,8 @@ class TeacherPayment extends Model
         return $this->payment_type === 'deduction';
     }
 
-    public function isBonus()
+    public function isOther()
     {
-        return $this->payment_type === 'bonus';
+        return $this->payment_type === 'other';
     }
 }

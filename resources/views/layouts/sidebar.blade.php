@@ -315,6 +315,23 @@
 
             @endif
 
+            @if(hasPermission('institute-expenses.index'))
+
+                <div class="nav-item">
+
+                    <a href="{{ route('admin.institute-expenses.index') }}"
+                        class="nav-link-custom {{ request()->routeIs('admin.institute-expenses.*') ? 'active' : '' }}">
+
+                        <i class="bi bi-cash-coin"></i>
+
+                        <span>Institute Expenses</span>
+
+                    </a>
+
+                </div>
+
+            @endif
+
             @if(hasPermission('institute-income.monthly-report'))
 
                 <div class="nav-item">
@@ -340,6 +357,65 @@
                         <i class="bi bi-book-fill"></i>
                         <span>Temporary ID</span>
                     </a>
+                </div>
+
+            @endif
+
+        </div>
+
+        <!-- Report SECTION -->
+        <div class="sidebar-section">
+
+            <div class="sidebar-section-title">
+                REPORTS
+            </div>
+
+            @if(hasPermission('daily-report.index'))
+
+                <div class="nav-item">
+
+                    <a href="{{ route('admin.daily-report.index') }}"
+                        class="nav-link-custom {{ request()->routeIs('admin.daily-report.*') ? 'active' : '' }}">
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>Daily Report</span>
+
+                    </a>
+
+                </div>
+
+            @endif
+            @if(hasPermission('monthly-report.index'))
+
+                <div class="nav-item">
+
+                    <a href="{{ route('admin.monthly-report.index') }}"
+                        class="nav-link-custom {{ request()->routeIs('admin.monthly-report.*') ? 'active' : '' }}">
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>Monthly Report</span>
+
+                    </a>
+
+                </div>
+
+            @endif
+
+            @if(hasPermission('teacher-report.index'))
+
+                <div class="nav-item">
+
+                    <a href="{{ route('admin.teacher-report.index') }}"
+                        class="nav-link-custom {{ request()->routeIs('admin.teacher-report.*') ? 'active' : '' }}">
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>Teacher Report</span>
+
+                    </a>
+
                 </div>
 
             @endif

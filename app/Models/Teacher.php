@@ -50,4 +50,6 @@ class Teacher extends Model
             StudentClass::class
         );
     }
+
+    
 }

@@ -11,18 +11,21 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class SystemUserController extends Controller
 {
     public function index(): View
     {
         $systemUsers = SystemUser::with('user')
+            ->whereHas('user', function ($q) {
+                $q->where('email', '!=', 'admin@nexorait.lk');
+            })
             ->latest()
             ->paginate(10);
 
         return view('admin.system-users.index', compact('systemUsers'));
     }
-
     public function create(): View
     {
         $userTypes = UserType::where('is_active', 1)
@@ -88,6 +91,14 @@ class SystemUserController extends Controller
                 ->route('admin.system-users.index')
                 ->with('success', 'System user created successfully.');
         } catch (\Throwable $e) {
+
+            Log::error('System user create failed', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return back()
                 ->withInput()
                 ->with('error', 'Something went wrong while saving system user.');
@@ -96,11 +107,14 @@ class SystemUserController extends Controller
 
     public function edit(SystemUser $systemUser): View
     {
-        $users = User::where('is_active', true)
+        $userTypes = UserType::where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        return view('admin.system-users.edit', compact('systemUser', 'users'));
+        return view(
+            'admin.system-users.edit',
+            compact('systemUser', 'userTypes')
+        );
     }
 
     public function update(Request $request, SystemUser $systemUser): RedirectResponse
