@@ -12,6 +12,7 @@ use App\Http\Controllers\API\StudentAttendanceReadController;
 use App\Http\Controllers\API\StudentClassController;
 use App\Http\Controllers\API\StudentClassEnrollmentController;
 use App\Http\Controllers\API\StudentController;
+use App\Http\Controllers\API\StudentImageController;
 use App\Http\Controllers\API\StudentPaymentController;
 use App\Http\Controllers\API\StudentPaymentReadController;
 use App\Http\Controllers\API\StudentRegisterController;
@@ -94,6 +95,16 @@ Route::middleware([
         '/quick-photo/upload',
         [QuickPhotoController::class, 'uploadQuickPhoto']
     )->name('api.quick-photo.upload');
+
+    Route::get(
+        '/students-image/fetch-image',
+        [StudentImageController::class, 'fetchStudentImage']
+    )->name('api.students.fetch-image');
+
+    Route::post(
+        '/students-image/update-image',
+        [StudentImageController::class, 'updateStudentImage']
+    )->name('api.students.update-image');
 
 
     Route::get(

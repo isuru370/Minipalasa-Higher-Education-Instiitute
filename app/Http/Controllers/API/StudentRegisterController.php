@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
+use App\Models\QuickPhoto;
 use App\Models\Student;
 use App\Models\StudentIdCard;
 use App\Models\TemporaryIdCard;
@@ -48,6 +49,20 @@ class StudentRegisterController extends Controller
                     }
                 },
             ],
+            'quick_image_id' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+
+                    $quickPhoto = QuickPhoto::where('custom_id', $value)
+                        ->where('is_active', true)
+                        ->first();
+
+                    if (!$quickPhoto) {
+                        $fail('Quick image is invalid or already used.');
+                    }
+                }
+            ],
             'initial_name'    => 'required|string|max:100',
             'guardian_mobile' => 'required|string|max:20',
             'grade_id'        => 'required|exists:grades,id',
@@ -62,15 +77,27 @@ class StudentRegisterController extends Controller
                 default  => 'uploads/default-images/male.png',
             };
 
+            $quickPhoto = null;
+
+            if (!empty($validated['quick_image_id'])) {
+                $quickPhoto = QuickPhoto::where('custom_id', $validated['quick_image_id'])
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($quickPhoto && !empty($quickPhoto->image_path)) {
+                    $imgUrl = $quickPhoto->image_path;
+                }
+            }
+
             $student = Student::create([
-                'custom_id'                   => $customId,
-                'temporary_qr_code'           => $validated['temporary_qr_code'],
+                'custom_id'                     => $customId,
+                'temporary_qr_code'             => $validated['temporary_qr_code'],
                 'temporary_qr_code_expire_date' => Carbon::now('Asia/Colombo')->addMonths(2),
-                'initial_name'                => $validated['initial_name'],
-                'guardian_mobile'             => $validated['guardian_mobile'],
-                'grade_id'                    => $validated['grade_id'],
-                'gender'                      => $validated['gender'],
-                'img_url'                     => $imgUrl,
+                'initial_name'                  => $validated['initial_name'],
+                'guardian_mobile'               => $validated['guardian_mobile'],
+                'grade_id'                      => $validated['grade_id'],
+                'gender'                        => $validated['gender'],
+                'img_url'                       => $imgUrl,
             ]);
 
             $temporaryCard = TemporaryIdCard::where('temporary_id_number', $validated['temporary_qr_code'])
@@ -82,6 +109,12 @@ class StudentRegisterController extends Controller
                     'student_id'   => $student->id,
                     'status'       => 'active',
                     'activated_at' => now(),
+                ]);
+            }
+
+            if ($quickPhoto) {
+                $quickPhoto->update([
+                    'is_active' => false,
                 ]);
             }
 
@@ -104,7 +137,6 @@ class StudentRegisterController extends Controller
             'data'    => $student,
         ], 201);
     }
-
     private function generateCustomId(int $gradeId): string
     {
         $grade = Grade::findOrFail($gradeId);
