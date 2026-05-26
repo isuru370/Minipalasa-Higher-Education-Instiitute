@@ -8,6 +8,9 @@
 
         @php
             $reportMonth = \Carbon\Carbon::create($year, $month, 1)->format('F Y');
+            $currentYear = now()->year;
+            $currentMonth = now()->month;
+            $isCurrentMonth = ($year == $currentYear && $month == $currentMonth);
         @endphp
 
         <!-- HERO -->
@@ -16,9 +19,24 @@
                 <div>
                     <h3 class="fw-bold mb-1">Institute Monthly Income Report</h3>
                     <p class="text-muted mb-0">{{ $reportMonth }}</p>
+                    @if(!$isCurrentMonth)
+                        <span class="badge bg-secondary mt-2">
+                            <i class="bi bi-calendar-lock me-1"></i> Read Only Mode (Past Month)
+                        </span>
+                    @else
+                        <span class="badge bg-success mt-2">
+                            <i class="bi bi-calendar-check me-1"></i> Current Month (Editable)
+                        </span>
+                    @endif
                 </div>
 
                 <div class="hero-actions">
+                    @if($isCurrentMonth)
+                        <button type="button" class="btn btn-danger custom-btn" data-bs-toggle="modal" data-bs-target="#expenseModal">
+                            <i class="bi bi-cash-coin me-1"></i> Add Expense
+                        </button>
+                    @endif
+
                     <button onclick="window.print()" class="btn btn-primary custom-btn">
                         <i class="bi bi-printer me-1"></i> Print
                     </button>
@@ -85,6 +103,104 @@
             'class_summaries' => $class_summaries ?? []
         ])
 
+        @php
+            $netIncome = $summary['net_total'] ?? 0;
+        @endphp
+
+        <!-- EXPENSE MODAL - Only shown for current month -->
+        @if($isCurrentMonth)
+            <div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="expenseModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow rounded-4">
+                        <div class="modal-header">
+                            <h5 class="modal-title fw-bold" id="expenseModalLabel">
+                                Add Institute Expense
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <form method="POST" action="{{ route('admin.institute-expenses.store') }}" id="expenseForm">
+                            @csrf
+
+                            <div class="modal-body">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Current Net Income Before Expense:
+                                    <strong>Rs. {{ number_format($netIncome, 2) }}</strong>
+                                </div>
+                                
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Note:</strong> Adding an expense will reduce the net income. 
+                                    You can add any amount. If expense exceeds net income, the net will become negative.
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Expense Amount <span class="text-danger">*</span></label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        name="amount"
+                                        id="expenseAmount"
+                                        class="form-control custom-input @error('amount') is-invalid @enderror"
+                                        placeholder="Enter expense amount"
+                                        required
+                                    >
+                                    @error('amount')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">
+                                        Enter the expense amount (positive number only). No upper limit restriction.
+                                    </small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Payment Date <span class="text-danger">*</span></label>
+                                    <input
+                                        type="date"
+                                        name="payment_date"
+                                        class="form-control custom-input @error('payment_date') is-invalid @enderror"
+                                        value="{{ now()->format('Y-m-d') }}"
+                                        required
+                                    >
+                                    @error('payment_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Reason / Description</label>
+                                    <textarea
+                                        name="reason"
+                                        rows="3"
+                                        class="form-control custom-input @error('reason') is-invalid @enderror"
+                                        placeholder="Enter reason for expense (optional)"
+                                    ></textarea>
+                                    @error('reason')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Hidden fields to pass month and year -->
+                                <input type="hidden" name="month" value="{{ $month }}">
+                                <input type="hidden" name="year" value="{{ $year }}">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary custom-btn" data-bs-dismiss="modal">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-danger custom-btn" id="expenseSubmitBtn">
+                                    <i class="bi bi-save me-1"></i> Save Expense
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+
     </div>
 @endsection
 
@@ -136,8 +252,8 @@
         }
 
         .custom-input {
-            border-radius: 14px !important ;
-              border: 1px solid #e2e8f0;
+            border-radius: 14px !important;
+            border: 1px solid #e2e8f0;
             min-height: 48px;
             box-shadow: none;
         }
@@ -145,6 +261,10 @@
         .custom-input:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 4px rgba(37,99,235,.10);
+        }
+
+        textarea.custom-input {
+            min-height: 80px;
         }
 
         .summary-card {
@@ -170,19 +290,13 @@
 
         .summary-value {
             margin: 0;
-            font-weight
-    :        800;
+            font-weight: 800;
+        }
 
-
-            }
         .summary-sub {
             opacity: .85;
-
-
-                 font-size: 
-           .8rem;
-
-           }
+            font-size: .8rem;
+        }
 
         .summary-blue { background: linear-gradient(135deg,#2563eb,#3b82f6); }
         .summary-green { background: linear-gradient(135deg,#10b981,#34d399); }
@@ -264,13 +378,6 @@
             font-weight: 600;
         }
 
-        .custom-badge {
-            border-radius: 10px;
-            padding: .5rem .7rem;
-            font-size: .75rem;
-            font-weight: 600;
-        }
-
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -279,7 +386,6 @@
         .empty-state i {
             font-size: 3rem;
             color: #cbd5e1;
-
             margin-bottom: 1rem;
         }
 
@@ -295,8 +401,7 @@
             }
 
             .hero-actions {
-                width:
-     100%;
+                width: 100%;
             }
 
             .hero-actions .btn {
@@ -324,4 +429,45 @@
             }
         }
     </style>
+@endpush
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('expenseForm');
+        const amountInput = document.getElementById('expenseAmount');
+        
+        if (form && amountInput) {
+            // Remove any validation that prevents saving
+            form.addEventListener('submit', function (e) {
+                const amount = parseFloat(amountInput.value || 0);
+                
+                if (isNaN(amount) || amount <= 0) {
+                    e.preventDefault();
+                    amountInput.classList.add('is-invalid');
+                    
+                    let feedback = amountInput.parentNode.querySelector('.custom-error-message');
+                    if (!feedback) {
+                        feedback = document.createElement('div');
+                        feedback.className = 'text-danger mt-1 custom-error-message';
+                        amountInput.parentNode.appendChild(feedback);
+                    }
+                    feedback.textContent = 'Please enter a valid expense amount greater than 0.';
+                    amountInput.focus();
+                }
+            });
+            
+            // Clear validation on input
+            amountInput.addEventListener('input', function () {
+                const amount = parseFloat(amountInput.value || 0);
+                let feedback = amountInput.parentNode.querySelector('.custom-error-message');
+                
+                if (amount > 0) {
+                    amountInput.classList.remove('is-invalid');
+                    if (feedback) feedback.remove();
+                }
+            });
+        }
+    });
+</script>
 @endpush

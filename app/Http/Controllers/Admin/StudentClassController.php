@@ -213,12 +213,28 @@ class StudentClassController extends Controller
 
     public function destroy(StudentClass $studentClass)
     {
+        // ❌ Prevent delete if class is ongoing
+        if ($studentClass->is_ongoing) {
+
+            return redirect()
+                ->route('admin.student-classes.index')
+                ->with('error', 'Ongoing classes cannot be deleted.');
+        }
+
+        // ❌ Prevent delete if class is active
+        if ($studentClass->is_active) {
+
+            return redirect()
+                ->route('admin.student-classes.index')
+                ->with('error', 'Active classes cannot be deleted.');
+        }
+
         DB::transaction(function () use ($studentClass) {
 
-            // 🔥 soft delete payment config
+            // Soft delete payment config
             $studentClass->paymentConfig()?->delete();
 
-            // delete class
+            // Delete class
             $studentClass->delete();
         });
 
@@ -226,6 +242,8 @@ class StudentClassController extends Controller
             ->route('admin.student-classes.index')
             ->with('success', 'Class deleted successfully.');
     }
+
+
 
     public function toggleActive(StudentClass $studentClass)
     {

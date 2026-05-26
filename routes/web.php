@@ -15,11 +15,17 @@ use App\Http\Controllers\Admin\ClassCategoryController;
 use App\Http\Controllers\Admin\ClassCategoryFeeController;
 use App\Http\Controllers\Admin\ClassHallController;
 use App\Http\Controllers\Admin\ClassScheduleController;
+use App\Http\Controllers\Admin\DailyReportController;
 use App\Http\Controllers\Admin\ExtraIncomeController;
 use App\Http\Controllers\Admin\ImageUploadController;
+use App\Http\Controllers\Admin\InstituteExpenseController;
 use App\Http\Controllers\Admin\InstituteIncomeController;
+use App\Http\Controllers\Admin\InstitutePaymentReportController;
+use App\Http\Controllers\Admin\MonthlyReportController;
+use App\Http\Controllers\Admin\TeacherReportController;
 use App\Http\Controllers\Admin\TeacherSalaryController;
 use App\Http\Controllers\Admin\TemporaryIDCardController;
+use App\Http\Controllers\Admin\UserPermissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -140,6 +146,22 @@ Route::middleware([
             'system-users',
             SystemUserController::class
         );
+
+        Route::get(
+            'user-permissions/{systemUser}',
+            [UserPermissionController::class, 'index']
+        )->name('user-permissions.index');
+
+        Route::post(
+            'user-permissions/{systemUser}',
+            [UserPermissionController::class, 'store']
+        )->name('user-permissions.store');
+
+
+        Route::get(
+            'institute-yearly-report',
+            [InstitutePaymentReportController::class, 'yearlyPaymentReport']
+        )->name('institute-yearly-report');
 
 
         /*
@@ -601,4 +623,52 @@ Route::middleware([
             'temporary-id-cards/download-pdf',
             [TemporaryIDCardController::class, 'downloadPdf']
         )->name('temporary-id-cards.download-pdf');
+        /*
+|--------------------------------------------------------------------------
+| Daily Reports
+|--------------------------------------------------------------------------
+*/
+
+        // Daily Report Routes
+        Route::get('daily-report', [DailyReportController::class, 'index'])->name('daily-report.index');
+        Route::get('daily-report/{type}/pdf', [DailyReportController::class, 'downloadPdf'])->name('daily-report.pdf');
+        Route::get('daily-report/{type}/excel', [DailyReportController::class, 'downloadExcel'])->name('daily-report.excel');
+
+        // Summary Report Download Routes (for generateDailyReport)
+        Route::get('daily-report/summary/pdf', [DailyReportController::class, 'downloadSummaryPdf'])->name('daily-report.summary.pdf');
+        Route::get('daily-report/summary/excel', [DailyReportController::class, 'downloadSummaryExcel'])->name('daily-report.summary.excel');
+
+
+        Route::get('/teacher-report', [TeacherReportController::class, 'index'])->name('teacher-report.index');
+        Route::get('/teacher-report/pdf', [TeacherReportController::class, 'downloadTeacherWithStudentPaymentsPdf'])->name('teacher-report.pdf');
+        Route::get('/teacher-report/excel', [TeacherReportController::class, 'downloadTeacherWithStudentPaymentsExcel'])->name('teacher-report.excel');
+        Route::get('/monthly-report', [MonthlyReportController::class, 'index'])
+            ->name('monthly-report.index');
+
+        // Excel
+        Route::get(
+            '/excel/teacher/teacher-salary-report/excel',
+            [MonthlyReportController::class, 'TeacherSalaryReportExcel']
+        )->name('teacher.salary.report.excel');
+
+        // PDF
+        Route::get(
+            '/pdf/teacher/teacher-salary-report/pdf',
+            [MonthlyReportController::class, 'TeacherSalaryReportPdf']
+        )->name('teacher.salary.report.pdf');
+        /*
+|--------------------------------------------------------------------------
+| Institute Expenses
+|--------------------------------------------------------------------------
+*/
+
+        Route::resource(
+            'institute-expenses',
+            InstituteExpenseController::class
+        );
+
+        Route::patch(
+            'institute-expenses/{instituteExpense}/toggle-status',
+            [InstituteExpenseController::class, 'toggleStatus']
+        )->name('institute-expenses.toggle-status');
     });

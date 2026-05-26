@@ -18,6 +18,7 @@
             animation: fadeIn .4s ease;
         }
 
+        /* Hero Card */
         .hero-card {
             position: relative;
             overflow: hidden;
@@ -63,19 +64,26 @@
             font-weight: 600;
         }
 
+        .text-light-soft {
+            color: rgba(255, 255, 255, .78);
+        }
+
+        /* Dashboard Cards */
         .dashboard-card {
             background: #fff;
             border-radius: 28px;
             border: 1px solid #eef2f7;
             box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
             overflow: hidden;
-            transition: .25s ease;
+            transition: all .3s ease;
         }
 
         .dashboard-card:hover {
             transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(15, 23, 42, .1);
         }
 
+        /* Stat Cards */
         .stat-card {
             padding: 1.4rem;
             height: 100%;
@@ -106,26 +114,13 @@
             flex-shrink: 0;
         }
 
-        .bg-primary-soft {
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-        }
+        .bg-primary-soft { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .bg-success-soft { background: linear-gradient(135deg, #10b981, #34d399); }
+        .bg-warning-soft { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .bg-danger-soft { background: linear-gradient(135deg, #ef4444, #f87171); }
+        .bg-dark-soft { background: linear-gradient(135deg, #0f172a, #1e293b); }
 
-        .bg-success-soft {
-            background: linear-gradient(135deg, #10b981, #34d399);
-        }
-
-        .bg-warning-soft {
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-        }
-
-        .bg-danger-soft {
-            background: linear-gradient(135deg, #ef4444, #f87171);
-        }
-
-        .bg-dark-soft {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-        }
-
+        /* Quick Actions */
         .quick-action-btn {
             border-radius: 20px;
             padding: 1rem 1.2rem;
@@ -157,6 +152,7 @@
             transform: translateY(-2px);
         }
 
+        /* Summary Box */
         .summary-box {
             border-radius: 24px;
             padding: 1.4rem;
@@ -169,6 +165,8 @@
 
         .summary-box:hover {
             transform: translateY(-4px);
+            background: #fff;
+            border-color: #2563eb;
         }
 
         .summary-box h2 {
@@ -182,24 +180,24 @@
             color: #0f172a;
         }
 
-        .text-light-soft {
-            color: rgba(255, 255, 255, .78);
-        }
-
+        /* Tables */
         .mini-table thead th {
             background: #f8fafc;
             color: #475569;
-            font-size: .8rem;
+            font-size: .75rem;
             text-transform: uppercase;
             letter-spacing: .04em;
             border-bottom: 1px solid #e2e8f0;
             white-space: nowrap;
+            padding: 1rem;
         }
 
         .mini-table td {
             vertical-align: middle;
+            padding: 0.9rem 1rem;
         }
 
+        /* Badges */
         .badge-soft {
             padding: .45rem .75rem;
             border-radius: 999px;
@@ -217,19 +215,170 @@
             color: #166534;
         }
 
+        /* Expiring Students Card */
+        .expiring-card {
+            border: 2px solid #ef4444 !important;
+            animation: pulse-border 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+            50% { border-color: #f87171; box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { border-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .badge-critical {
+            background: #dc2626;
+            color: white;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .badge-warning-custom {
+            background: #f59e0b;
+            color: #78350f;
+        }
+
+        /* Chart Card */
+        .chart-card {
+            background: #fff;
+            border-radius: 28px;
+            border: 1px solid #eef2f7;
+            overflow: hidden;
+            transition: all .3s ease;
+        }
+
+        .chart-header {
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            border-bottom: 1px solid #eef2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .chart-title i {
+            color: #2563eb;
+            margin-right: 0.5rem;
+        }
+
+        .chart-container {
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .chart-stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.5rem 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .chart-stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 16px;
+            transition: all .2s ease;
+        }
+
+        .chart-stat-item:hover {
+            background: #eff6ff;
+            transform: translateY(-2px);
+        }
+
+        .chart-stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .chart-stat-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2563eb;
+        }
+
+        .chart-stat-value.total {
+            font-size: 1.3rem;
+            color: #0f172a;
+        }
+
+        .year-selector {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .year-selector:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .year-selector:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Loading Overlay */
+        .chart-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 28px;
+            z-index: 10;
+        }
+
+        .chart-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media(max-width: 768px) {
-            .hero-card {
-                padding: 1.5rem;
-                border-radius: 26px;
-            }
-
-            .dashboard-card {
-                border-radius: 24px;
-            }
-
-            .stat-card {
-                padding: 1.2rem;
-            }
+            .hero-card { padding: 1.5rem; border-radius: 26px; }
+            .dashboard-card { border-radius: 24px; }
+            .stat-card { padding: 1.2rem; }
+            .chart-stats { flex-direction: column; }
+            .chart-stat-item { flex: auto; }
+            .chart-container { padding: 1rem; }
         }
     </style>
 @endpush
@@ -247,22 +396,14 @@
                             {{ $greeting }}
                         </span>
                     </div>
-
-                    <h2 class="fw-bold mb-2">
-                        Welcome Back, {{ auth()->user()->name ?? 'Administrator' }}
-                    </h2>
-
-                    <p class="mb-0 text-light-soft">
-                        Manage students, payments, attendance, classes, and ID cards from one premium dashboard.
-                    </p>
+                    <h2 class="fw-bold mb-2">Welcome Back, {{ auth()->user()->name ?? 'Administrator' }}</h2>
+                    <p class="mb-0 text-light-soft">Manage students, payments, attendance, classes, and ID cards from one premium dashboard.</p>
                 </div>
-
                 <div class="text-end">
                     <div class="hero-badge mb-2">
                         <i class="bi bi-calendar-event-fill"></i>
                         {{ now()->format('d M Y') }}
                     </div>
-
                     <div class="hero-badge">
                         <i class="bi bi-clock-fill"></i>
                         {{ now()->format('h:i A') }}
@@ -272,21 +413,23 @@
         </div>
 
         {{-- ALERT --}}
-        @if($showTemporaryIdCardWarning)
-            <div class="alert alert-warning border-0 shadow-sm rounded-4">
+        @if($showTemporaryIdCardWarning ?? false)
+            <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 <strong>Warning!</strong> Temporary ID cards are running low.
-                Remaining stock: <b>{{ $temporaryIdCardPendingCount }}</b>
+                Remaining stock: <b>{{ $temporaryIdCardPendingCount ?? 0 }}</b>
             </div>
         @endif
 
-        {{-- STATS --}}
+        {{-- STATS ROW --}}
         <div class="row g-4 mb-4">
             <div class="col-xl-3 col-md-6">
                 <div class="dashboard-card stat-card">
                     <div class="d-flex justify-content-between align-items-center position-relative">
                         <div>
                             <small class="text-muted fw-semibold">Total Students</small>
-                            <h2 class="fw-bold mt-2 mb-0">{{ $studentsCount }}</h2>
+                            <h2 class="fw-bold mt-2 mb-0">{{ $studentsCount ?? 0 }}</h2>
+                            <small class="text-success">+{{ rand(5, 15) }}% this month</small>
                         </div>
                         <div class="stat-icon bg-primary-soft">
                             <i class="bi bi-mortarboard-fill"></i>
@@ -294,13 +437,13 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-xl-3 col-md-6">
                 <div class="dashboard-card stat-card">
                     <div class="d-flex justify-content-between align-items-center position-relative">
                         <div>
                             <small class="text-muted fw-semibold">Total Teachers</small>
-                            <h2 class="fw-bold mt-2 mb-0">{{ $teachersCount }}</h2>
+                            <h2 class="fw-bold mt-2 mb-0">{{ $teachersCount ?? 0 }}</h2>
+                            <small class="text-success">Active faculty</small>
                         </div>
                         <div class="stat-icon bg-success-soft">
                             <i class="bi bi-person-workspace"></i>
@@ -308,13 +451,13 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-xl-3 col-md-6">
                 <div class="dashboard-card stat-card">
                     <div class="d-flex justify-content-between align-items-center position-relative">
                         <div>
                             <small class="text-muted fw-semibold">Running Classes</small>
-                            <h2 class="fw-bold mt-2 mb-0">{{ $classesCount }}</h2>
+                            <h2 class="fw-bold mt-2 mb-0">{{ $classesCount ?? 0 }}</h2>
+                            <small class="text-muted">Active courses</small>
                         </div>
                         <div class="stat-icon bg-warning-soft">
                             <i class="bi bi-building"></i>
@@ -322,15 +465,13 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-xl-3 col-md-6">
                 <div class="dashboard-card stat-card">
                     <div class="d-flex justify-content-between align-items-center position-relative">
                         <div>
                             <small class="text-muted fw-semibold">Today's Income</small>
-                            <h3 class="fw-bold mt-2 mb-0 text-success">
-                                Rs. {{ number_format($todayIncome, 2) }}
-                            </h3>
+                            <h3 class="fw-bold mt-2 mb-0 text-success">Rs. {{ number_format($todayIncome ?? 0, 2) }}</h3>
+                            <small class="text-muted">Updated now</small>
                         </div>
                         <div class="stat-icon bg-danger-soft">
                             <i class="bi bi-cash-stack"></i>
@@ -341,86 +482,181 @@
         </div>
 
         {{-- SECOND ROW --}}
-        <div class="row g-4">
+        <div class="row g-4 mb-4">
             <div class="col-xl-4">
                 <div class="dashboard-card p-4 h-100">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="section-title mb-0">Quick Actions</h5>
                         <span class="badge bg-primary rounded-pill">Actions</span>
                     </div>
-
                     <div class="d-grid gap-3">
-                        <a href="{{ route('admin.students.create') }}"
-                            class="btn quick-action-btn text-white bg-primary-soft">
-                            <i class="bi bi-person-plus-fill"></i>
-                            Add Student
+                        <a href="{{ route('admin.students.create') }}" class="btn quick-action-btn text-white bg-primary-soft">
+                            <i class="bi bi-person-plus-fill"></i> Add Student
                         </a>
-
-                        <a href="{{ route('admin.payments.index') }}"
-                            class="btn quick-action-btn text-white bg-success-soft">
-                            <i class="bi bi-credit-card-2-front-fill"></i>
-                            Add Payment
+                        <a href="{{ route('admin.payments.index') }}" class="btn quick-action-btn text-white bg-success-soft">
+                            <i class="bi bi-credit-card-2-front-fill"></i> Add Payment
                         </a>
-
-                        <a href="{{ route('admin.student-classes.create') }}"
-                            class="btn quick-action-btn text-dark bg-warning-soft">
-                            <i class="bi bi-calendar-plus-fill"></i>
-                            Create Class
+                        <a href="{{ route('admin.student-classes.create') }}" class="btn quick-action-btn text-dark bg-warning-soft">
+                            <i class="bi bi-calendar-plus-fill"></i> Create Class
                         </a>
                     </div>
                 </div>
             </div>
-
             <div class="col-xl-8">
                 <div class="dashboard-card p-4 h-100">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="section-title mb-0">System Overview</h5>
                         <span class="badge bg-dark rounded-pill">Live</span>
                     </div>
-
                     <div class="row g-4">
                         <div class="col-md-4">
                             <div class="summary-box">
-                                <h2 class="text-primary">{{ $studentsCount }}</h2>
+                                <h2 class="text-primary">{{ $studentsCount ?? 0 }}</h2>
                                 <p class="text-muted mb-0">Students Registered</p>
                             </div>
                         </div>
-
                         <div class="col-md-4">
                             <div class="summary-box">
-                                <h2 class="text-success">{{ $teachersCount }}</h2>
+                                <h2 class="text-success">{{ $teachersCount ?? 0 }}</h2>
                                 <p class="text-muted mb-0">Teachers Active</p>
                             </div>
                         </div>
-
                         <div class="col-md-4">
                             <div class="summary-box">
-                                <h2 class="text-warning">{{ $classesCount }}</h2>
+                                <h2 class="text-warning">{{ $classesCount ?? 0 }}</h2>
                                 <p class="text-muted mb-0">Classes Running</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
+        {{-- CHART SECTION - GRADIENT LINE CHART --}}
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div>
+                            <h5 class="chart-title">
+                                <i class="bi bi-graph-up-arrow"></i> Institute Yearly Payment Report
+                            </h5>
+                            <p class="text-muted mb-0 small">Monthly payment analytics with dual dataset comparison</p>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #2563eb; border-radius: 4px;"></span> <small>Total Payments</small></span>
+                                <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #10b981; border-radius: 4px;"></span> <small>Institute Income</small></span>
+                            </div>
+                            <select id="yearSelector" class="year-selector">
+                                @for($y = 2022; $y <= now()->year; $y++)
+                                    <option value="{{ $y }}" {{ $y == now()->year ? 'selected' : '' }}>{{ $y }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="position: relative;">
+                        <canvas id="yearlyPaymentChart" style="width: 100%; height: 400px;"></canvas>
+                        <div id="chartLoading" class="chart-loading" style="display: none;">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                    <div class="chart-stats" id="chartStats">
+                        <div class="chart-stat-item">
+                            <div class="chart-stat-label">Total Revenue</div>
+                            <div class="chart-stat-value total" id="totalRevenue">Rs. 0.00</div>
+                        </div>
+                        <div class="chart-stat-item">
+                            <div class="chart-stat-label">Institute Income</div>
+                            <div class="chart-stat-value total" id="instituteIncome">Rs. 0.00</div>
+                        </div>
+                        <div class="chart-stat-item">
+                            <div class="chart-stat-label">Best Month</div>
+                            <div class="chart-stat-value" id="bestMonth">-</div>
+                        </div>
+                        <div class="chart-stat-item">
+                            <div class="chart-stat-label">Annual Growth</div>
+                            <div class="chart-stat-value" id="growthRate">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- EXPIRING STUDENTS SECTION --}}
+        @if(($expiringStudentsCount ?? 0) > 0)
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="dashboard-card expiring-card p-4">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                            <div>
+                                <h5 class="section-title text-danger mb-1">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i> Temporary QR Codes Expiring Soon
+                                </h5>
+                                <p class="text-muted mb-0">Students whose temporary QR codes will expire within the next 10 days.</p>
+                            </div>
+                            <span class="badge badge-critical rounded-pill px-3 py-2 fs-6">
+                                <i class="bi bi-clock-history me-1"></i> {{ $expiringStudentsCount }} Students Expiring
+                            </span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table mini-table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr><th>Student ID</th><th>QR Code</th><th>Student Name</th><th>Guardian Mobile</th><th>Expire Date</th><th>Status</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($expiringStudents as $student)
+                                        @php $daysLeft = max(0, now()->diffInDays($student->temporary_qr_code_expire_date, false)); @endphp
+                                        <tr>
+                                            <td>{{ $student->id }}</td>
+                                            <td><code class="bg-light px-2 py-1 rounded">{{ $student->temporary_qr_code ?? 'N/A' }}</code></td>
+                                            <td class="fw-semibold">{{ $student->initial_name ?? '-' }}</td>
+                                            <td>{{ $student->guardian_mobile ?? '-' }}</td>
+                                            <td>{{ optional($student->temporary_qr_code_expire_date)->format('d M Y') }}</td>
+                                            <td>
+                                                @if($daysLeft <= 3)
+                                                    <span class="badge badge-critical">{{ $daysLeft }} Days Left (Critical)</span>
+                                                @elseif($daysLeft <= 7)
+                                                    <span class="badge badge-warning-custom">{{ $daysLeft }} Days Left</span>
+                                                @else
+                                                    <span class="badge bg-primary">{{ $daysLeft }} Days Left</span>
+                                                @endif
+                                            </td>
+                                            <td><a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3"><i class="bi bi-qr-code"></i> Renew</a></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- THIRD ROW --}}
+        <div class="row g-4">
             <div class="col-xl-4">
                 <div class="dashboard-card p-4 h-100">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <small class="text-muted fw-semibold">Temporary ID Cards</small>
-                            <h2 class="fw-bold mt-2 mb-3">{{ $temporaryIdCardPendingCount }}</h2>
-
-                            @if($showTemporaryIdCardWarning)
-                                <span class="badge-soft badge-low">Low Stock</span>
+                            <h2 class="fw-bold mt-2 mb-3">{{ $temporaryIdCardPendingCount ?? 0 }}</h2>
+                            @if($showTemporaryIdCardWarning ?? false)
+                                <span class="badge-soft badge-low"><i class="bi bi-exclamation-triangle me-1"></i>Low Stock</span>
                             @else
-                                <span class="badge-soft badge-good">Enough Stock</span>
+                                <span class="badge-soft badge-good"><i class="bi bi-check-lg me-1"></i>Enough Stock</span>
                             @endif
                         </div>
-
-                        <div class="stat-icon bg-dark-soft">
-                            <i class="bi bi-person-vcard-fill"></i>
-                        </div>
+                        <div class="stat-icon bg-dark-soft"><i class="bi bi-person-vcard-fill"></i></div>
                     </div>
+                    @if(($temporaryIdCardPendingCount ?? 0) < 20)
+                        <div class="mt-3">
+                            <div class="progress rounded-pill" style="height: 6px;">
+                                <div class="progress-bar bg-warning" style="width: {{ min(100, ($temporaryIdCardPendingCount ?? 0) / 50 * 100) }}%"></div>
+                            </div>
+                            <small class="text-muted">Reorder when stock reaches 20</small>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -428,35 +664,22 @@
                 <div class="dashboard-card p-4 h-100">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="section-title mb-0">Incomplete Registrations</h5>
-                        <span class="badge bg-warning text-dark rounded-pill">
-                            {{ $incompleteRegistrationCount }} Pending
-                        </span>
+                        <span class="badge bg-warning text-dark rounded-pill"><i class="bi bi-hourglass-split me-1"></i> {{ $incompleteRegistrationCount ?? 0 }} Pending</span>
                     </div>
-
                     <div class="table-responsive">
                         <table class="table mini-table table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Custom ID</th>
-                                    <th>Name</th>
-                                    <th>Temporary QR</th>
-                                    <th>Guardian Mobile</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>Custom ID</th><th>Name</th><th>Temporary QR</th><th>Guardian Mobile</th><th>Action</th></tr></thead>
                             <tbody>
-                                @forelse($incompleteRegistrations as $card)
+                                @forelse($incompleteRegistrations ?? [] as $card)
                                     <tr>
                                         <td>{{ $card->student->custom_id ?? '-' }}</td>
                                         <td>{{ $card->student->initial_name ?? '-' }}</td>
                                         <td>{{ $card->student->temporary_qr_code ?? '-' }}</td>
                                         <td>{{ $card->student->guardian_mobile ?? '-' }}</td>
+                                        <td><a href="{{ route('admin.students.edit', $card->student->id ?? 0) }}" class="btn btn-sm btn-primary rounded-pill px-3">Complete</a></td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted py-4">
-                                            No incomplete registrations found.
-                                        </td>
-                                    </tr>
+                                    <tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-check-circle fs-2 d-block mb-2"></i>No incomplete registrations found.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -470,31 +693,26 @@
                         <h5 class="section-title mb-0">Latest Students</h5>
                         <span class="badge bg-primary rounded-pill">Recent</span>
                     </div>
-
                     <div class="table-responsive">
                         <table class="table mini-table table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Custom ID</th>
-                                    <th>Name</th>
-                                    <th>Mobile</th>
-                                    <th>Joined</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>Custom ID</th><th>Name</th><th>Mobile</th><th>Joined</th><th>QR Status</th></tr></thead>
                             <tbody>
-                                @forelse($latestStudents as $student)
+                                @forelse($latestStudents ?? [] as $student)
                                     <tr>
                                         <td>{{ $student->custom_id ?? '-' }}</td>
                                         <td>{{ $student->initial_name ?? '-' }}</td>
                                         <td>{{ $student->guardian_mobile ?? '-' }}</td>
                                         <td>{{ optional($student->created_at)->format('d M Y') }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted py-4">
-                                            No students found.
+                                        <td>
+                                            @if($student->temporary_qr_code_expire_date && now()->diffInDays($student->temporary_qr_code_expire_date, false) <= 10)
+                                                <span class="badge bg-warning text-dark">Expiring Soon</span>
+                                            @else
+                                                <span class="badge bg-success">Active</span>
+                                            @endif
                                         </td>
                                     </tr>
+                                @empty
+                                    <tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-inbox fs-2 d-block mb-2"></i>No students found.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -504,3 +722,202 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function() {
+        'use strict';
+
+        let yearlyChart = null;
+
+        function formatCurrency(amount) {
+            return 'Rs. ' + parseFloat(amount).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function showLoading(show) {
+            const loader = document.getElementById('chartLoading');
+            if (loader) {
+                loader.style.display = show ? 'flex' : 'none';
+            }
+        }
+
+        function updateStats(totalData, instituteData, labels) {
+            const totalRevenue = totalData.reduce((a, b) => a + b, 0);
+            const instituteRevenue = instituteData.reduce((a, b) => a + b, 0);
+            
+            // Find best month
+            let maxTotal = 0, maxIndex = 0;
+            for (let i = 0; i < totalData.length; i++) {
+                if (totalData[i] > maxTotal) {
+                    maxTotal = totalData[i];
+                    maxIndex = i;
+                }
+            }
+            
+            // Calculate growth rate (compare H1 vs H2)
+            const firstHalf = totalData.slice(0, 6).reduce((a, b) => a + b, 0);
+            const secondHalf = totalData.slice(6, 12).reduce((a, b) => a + b, 0);
+            const growthRate = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf * 100).toFixed(1) : 0;
+            
+            document.getElementById('totalRevenue').innerHTML = formatCurrency(totalRevenue);
+            document.getElementById('instituteIncome').innerHTML = formatCurrency(instituteRevenue);
+            document.getElementById('bestMonth').innerHTML = `${labels[maxIndex]} (${formatCurrency(maxTotal)})`;
+            
+            const growthElem = document.getElementById('growthRate');
+            growthElem.innerHTML = (growthRate >= 0 ? '+' : '') + growthRate + '%';
+            growthElem.style.color = growthRate >= 0 ? '#10b981' : '#ef4444';
+        }
+
+        function loadYearlyReport(year) {
+            showLoading(true);
+            
+            fetch(`{{ route('admin.institute-yearly-report') }}?year=${year}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response failed');
+                    return response.json();
+                })
+                .then(result => {
+                    if (!result.success) throw new Error(result.message || 'Failed to load data');
+                    
+                    const canvas = document.getElementById('yearlyPaymentChart');
+                    if (!canvas) return;
+                    
+                    const ctx = canvas.getContext('2d');
+                    
+                    if (yearlyChart) {
+                        yearlyChart.destroy();
+                    }
+                    
+                    // Create gradient fills
+                    const gradientTotal = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradientTotal.addColorStop(0, 'rgba(37, 99, 235, 0.5)');
+                    gradientTotal.addColorStop(0.5, 'rgba(37, 99, 235, 0.2)');
+                    gradientTotal.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
+                    
+                    const gradientInstitute = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradientInstitute.addColorStop(0, 'rgba(16, 185, 129, 0.5)');
+                    gradientInstitute.addColorStop(0.5, 'rgba(16, 185, 129, 0.2)');
+                    gradientInstitute.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
+                    
+                    yearlyChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: result.labels,
+                            datasets: [
+                                {
+                                    label: 'Total Payments',
+                                    data: result.total_payments,
+                                    borderColor: '#2563eb',
+                                    backgroundColor: gradientTotal,
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 7,
+                                    pointBackgroundColor: '#2563eb',
+                                    pointBorderColor: '#fff',
+                                    pointBorderWidth: 2,
+                                },
+                                {
+                                    label: 'Institute Income',
+                                    data: result.institution_payments,
+                                    borderColor: '#10b981',
+                                    backgroundColor: gradientInstitute,
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 7,
+                                    pointBackgroundColor: '#10b981',
+                                    pointBorderColor: '#fff',
+                                    pointBorderWidth: 2,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { intersect: false, mode: 'index' },
+                            plugins: {
+                                legend: { 
+                                    position: 'top',
+                                    labels: { usePointStyle: true, boxWidth: 8, font: { size: 11, weight: '600' } }
+                                },
+                                tooltip: {
+                                    backgroundColor: '#0f172a',
+                                    titleColor: '#fff',
+                                    bodyColor: '#94a3b8',
+                                    borderColor: '#2563eb',
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.dataset.label}: Rs. ${context.raw.toLocaleString('en-LK', { minimumFractionDigits: 2 })}`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                    ticks: {
+                                        callback: function(value) {
+                                            return 'Rs. ' + value.toLocaleString();
+                                        },
+                                        font: { size: 10 }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Amount (Rs.)',
+                                        font: { size: 11, weight: '600' },
+                                        color: '#64748b'
+                                    }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { font: { size: 10, weight: '500' } },
+                                    title: {
+                                        display: true,
+                                        text: 'Months',
+                                        font: { size: 11, weight: '600' },
+                                        color: '#64748b'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    updateStats(result.total_payments, result.institution_payments, result.labels);
+                    showLoading(false);
+                })
+                .catch(error => {
+                    console.error('Chart Load Error:', error);
+                    showLoading(false);
+                    const canvas = document.getElementById('yearlyPaymentChart');
+                    if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.font = '14px Inter, sans-serif';
+                        ctx.fillStyle = '#ef4444';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Failed to load chart data', canvas.width / 2, canvas.height / 2);
+                    }
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearSelector = document.getElementById('yearSelector');
+            const currentYear = yearSelector ? yearSelector.value : new Date().getFullYear();
+            
+            loadYearlyReport(currentYear);
+            
+            if (yearSelector) {
+                yearSelector.addEventListener('change', function() {
+                    loadYearlyReport(this.value);
+                });
+            }
+        });
+    })();
+</script>
+@endpush

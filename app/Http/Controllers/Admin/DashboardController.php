@@ -39,8 +39,8 @@ class DashboardController extends Controller
         $incompleteRegistrationCount = StudentIdCard::where('registration_status', 'incomplete')->count();
 
         $incompleteRegistrations = StudentIdCard::with([
-                'student:id,custom_id,temporary_qr_code,initial_name,guardian_mobile'
-            ])
+            'student:id,custom_id,temporary_qr_code,initial_name,guardian_mobile'
+        ])
             ->where('registration_status', 'incomplete')
             ->latest()
             ->take(5)
@@ -49,6 +49,24 @@ class DashboardController extends Controller
         $latestStudents = Student::latest()
             ->take(5)
             ->get(['id', 'custom_id', 'initial_name', 'guardian_mobile', 'created_at']);
+
+        $expiringStudents = Student::select(
+            'id',
+            'temporary_qr_code',
+            'initial_name',
+            'guardian_mobile',
+            'temporary_qr_code_expire_date'
+        )
+            ->where('permanent_qr_active', 0)
+            ->whereNotNull('temporary_qr_code_expire_date')
+            ->whereBetween('temporary_qr_code_expire_date', [
+                Carbon::today(),
+                Carbon::today()->addDays(10),
+            ])
+            ->orderBy('temporary_qr_code_expire_date')
+            ->get();
+
+        $expiringStudentsCount = $expiringStudents->count();
 
         return view('admin.dashboard.index', compact(
             'studentsCount',
@@ -60,7 +78,9 @@ class DashboardController extends Controller
             'showTemporaryIdCardWarning',
             'incompleteRegistrationCount',
             'incompleteRegistrations',
-            'latestStudents'
+            'latestStudents',
+            'expiringStudents',
+            'expiringStudentsCount'
         ));
     }
 }
