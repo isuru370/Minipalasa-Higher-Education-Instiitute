@@ -8,12 +8,10 @@
     $selectedAdmissionId = old('admission_id', $latestAdmissionPayment?->admission_id);
     $selectedAmount = old('amount', $latestAdmissionPayment?->amount);
 
-    if ($isEdit && !empty($student?->img_url)) {
-        if (\Illuminate\Support\Str::startsWith($student->img_url, 'uploads/')) {
-            $studentImage = asset('storage/' . $student->img_url);
-        } else {
-            $studentImage = asset($student->img_url);
-        }
+    if (!empty($student?->img_url)) {
+        $studentImage = \Illuminate\Support\Str::startsWith($student->img_url, 'http')
+            ? $student->img_url
+            : asset('storage/' . ltrim($student->img_url, '/'));
     } else {
         $studentImage = asset('images/default-student.png');
     }
