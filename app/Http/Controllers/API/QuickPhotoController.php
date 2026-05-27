@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Throwable;
 
 class QuickPhotoController extends Controller
@@ -22,7 +21,7 @@ class QuickPhotoController extends Controller
                 'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             ]);
 
-            $uploadedPath = $validated['image']->store('quick-photos', 'public');
+            $uploadedPath = $validated['image']->store('uploads', 'public');
 
             $quickPhoto = DB::transaction(function () use ($uploadedPath) {
                 $customId = $this->generateCustomId();

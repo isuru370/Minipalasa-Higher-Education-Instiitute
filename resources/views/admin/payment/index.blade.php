@@ -442,7 +442,7 @@
             // API URLs
             const readApiUrl = "{{ route('api.payments.read') }}";
             const storePaymentApiUrl = "{{ route('api.student-payments.store') }}";
-            const defaultStudentImage = "{{ asset('images/default-student.png') }}";
+            const defaultStudentImage = "{{ asset('storage/uploads/male.png') }}";
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
             let html5QrCodeScanner = null;

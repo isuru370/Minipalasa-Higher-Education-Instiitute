@@ -230,14 +230,14 @@
 
     @php
         $bgBase64 = '';
-        $bgPath = public_path('uploads/id/temporary.png');
+        $bgPath = public_path('storage/id/temporary.png');
 
         if (file_exists($bgPath)) {
             $bgBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($bgPath));
         }
 
         $logoSrc = '';
-        $logoPath = public_path('uploads/logo/black_logo.png');
+        $logoPath = public_path('storage/logo/black_logo.png');
 
         if (file_exists($logoPath)) {
             $logoSrc = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));

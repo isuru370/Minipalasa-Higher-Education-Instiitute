@@ -78,9 +78,9 @@ class StudentController extends Controller
             } else {
                 // Default image by gender
                 if (($data['gender'] ?? null) === 'female') {
-                    $data['img_url'] = 'uploads/default-images/female.png';
+                    $data['img_url'] = 'uploads/female.png';
                 } else {
-                    $data['img_url'] = 'uploads/default-images/male.png';
+                    $data['img_url'] = 'uploads/male.png';
                 }
             }
 
