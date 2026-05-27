@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\InstituteExpenseController;
 use App\Http\Controllers\Admin\InstituteIncomeController;
 use App\Http\Controllers\Admin\InstitutePaymentReportController;
 use App\Http\Controllers\Admin\MonthlyReportController;
+use App\Http\Controllers\Admin\StudentImageController;
 use App\Http\Controllers\Admin\TeacherReportController;
 use App\Http\Controllers\Admin\TeacherSalaryController;
 use App\Http\Controllers\Admin\TemporaryIDCardController;
@@ -661,6 +662,12 @@ Route::middleware([
 | Institute Expenses
 |--------------------------------------------------------------------------
 */
+
+        Route::get('/student-images', [StudentImageController::class, 'index'])
+            ->name('student-images.index');
+
+        Route::post('/student-images/{quickPhoto}/assign', [StudentImageController::class, 'assign'])
+            ->name('student-images.assign');
 
         Route::resource(
             'institute-expenses',

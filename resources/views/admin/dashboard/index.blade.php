@@ -114,13 +114,27 @@
             flex-shrink: 0;
         }
 
-        .bg-primary-soft { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-        .bg-success-soft { background: linear-gradient(135deg, #10b981, #34d399); }
-        .bg-warning-soft { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-        .bg-danger-soft { background: linear-gradient(135deg, #ef4444, #f87171); }
-        .bg-dark-soft { background: linear-gradient(135deg, #0f172a, #1e293b); }
+        .bg-primary-soft {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+        }
 
-        /* Quick Actions */
+        .bg-success-soft {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+
+        .bg-warning-soft {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+
+        .bg-danger-soft {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+
+        .bg-dark-soft {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
+
+        /* Quick Actions - Button Styles */
         .quick-action-btn {
             border-radius: 20px;
             padding: 1rem 1.2rem;
@@ -133,6 +147,8 @@
             gap: .7rem;
             position: relative;
             overflow: hidden;
+            width: 100%;
+            cursor: pointer;
         }
 
         .quick-action-btn::before {
@@ -150,6 +166,21 @@
 
         .quick-action-btn:hover {
             transform: translateY(-2px);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-warning-custom {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
         }
 
         /* Summary Box */
@@ -222,9 +253,18 @@
         }
 
         @keyframes pulse-border {
-            0% { border-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
-            50% { border-color: #f87171; box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-            100% { border-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% {
+                border-color: #ef4444;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2);
+            }
+            50% {
+                border-color: #f87171;
+                box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+            }
+            100% {
+                border-color: #ef4444;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
         .badge-critical {
@@ -372,6 +412,16 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Button reset for nav-link-custom */
+        .nav-link-custom {
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
         @media(max-width: 768px) {
             .hero-card { padding: 1.5rem; border-radius: 26px; }
             .dashboard-card { border-radius: 24px; }
@@ -490,15 +540,15 @@
                         <span class="badge bg-primary rounded-pill">Actions</span>
                     </div>
                     <div class="d-grid gap-3">
-                        <a href="{{ route('admin.students.create') }}" class="btn quick-action-btn text-white bg-primary-soft">
+                        <button type="button" class="quick-action-btn btn-primary-custom" data-href="{{ route('admin.students.create') }}">
                             <i class="bi bi-person-plus-fill"></i> Add Student
-                        </a>
-                        <a href="{{ route('admin.payments.index') }}" class="btn quick-action-btn text-white bg-success-soft">
+                        </button>
+                        <button type="button" class="quick-action-btn btn-success-custom" data-href="{{ route('admin.payments.index') }}">
                             <i class="bi bi-credit-card-2-front-fill"></i> Add Payment
-                        </a>
-                        <a href="{{ route('admin.student-classes.create') }}" class="btn quick-action-btn text-dark bg-warning-soft">
+                        </button>
+                        <button type="button" class="quick-action-btn btn-warning-custom" data-href="{{ route('admin.student-classes.create') }}">
                             <i class="bi bi-calendar-plus-fill"></i> Create Class
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -545,8 +595,10 @@
                         </div>
                         <div class="d-flex align-items-center gap-3">
                             <div class="d-flex align-items-center gap-3">
-                                <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #2563eb; border-radius: 4px;"></span> <small>Total Payments</small></span>
-                                <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #10b981; border-radius: 4px;"></span> <small>Institute Income</small></span>
+                                <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #2563eb; border-radius: 4px;"></span>
+                                    <small>Total Payments</small></span>
+                                <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #10b981; border-radius: 4px;"></span>
+                                    <small>Institute Income</small></span>
                             </div>
                             <select id="yearSelector" class="year-selector">
                                 @for($y = 2022; $y <= now()->year; $y++)
@@ -599,6 +651,7 @@
                                 <i class="bi bi-clock-history me-1"></i> {{ $expiringStudentsCount }} Students Expiring
                             </span>
                         </div>
+
                         <div class="table-responsive">
                             <table class="table mini-table table-hover align-middle mb-0">
                                 <thead>
@@ -613,16 +666,16 @@
                                             <td class="fw-semibold">{{ $student->initial_name ?? '-' }}</td>
                                             <td>{{ $student->guardian_mobile ?? '-' }}</td>
                                             <td>{{ optional($student->temporary_qr_code_expire_date)->format('d M Y') }}</td>
+                                            <td>@if($daysLeft <= 3)<span class="badge badge-critical">{{ $daysLeft }} Days Left (Critical)</span>@elseif($daysLeft <= 7)<span class="badge badge-warning-custom">{{ $daysLeft }} Days Left</span>@else<span class="badge bg-primary">{{ $daysLeft }} Days Left</span>@endif</td>
                                             <td>
-                                                @if($daysLeft <= 3)
-                                                    <span class="badge badge-critical">{{ $daysLeft }} Days Left (Critical)</span>
-                                                @elseif($daysLeft <= 7)
-                                                    <span class="badge badge-warning-custom">{{ $daysLeft }} Days Left</span>
-                                                @else
-                                                    <span class="badge bg-primary">{{ $daysLeft }} Days Left</span>
-                                                @endif
+                                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 renew-btn"
+                                                    data-bs-toggle="modal" data-bs-target="#renewNoticeModal"
+                                                    data-student-id="{{ $student->id }}"
+                                                    data-student-name="{{ $student->initial_name ?? 'Student' }}"
+                                                    data-renew-url="{{ route('admin.students.edit', $student->id) }}">
+                                                    <i class="bi bi-qr-code me-1"></i> Renew
+                                                </button>
                                             </td>
-                                            <td><a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3"><i class="bi bi-qr-code"></i> Renew</a></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -632,6 +685,29 @@
                 </div>
             </div>
         @endif
+
+        {{-- Renew Notice Modal --}}
+        <div class="modal fade" id="renewNoticeModal" tabindex="-1" aria-labelledby="renewNoticeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="renewNoticeModalLabel">Renewal Notice</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-2">You are about to renew the temporary ID card for: <strong id="renewStudentName">Student</strong></p>
+                        <div class="alert alert-warning mb-0">
+                            If the child's permanent ID card has not been issued yet, or if you notice any problem during renewal,
+                            please email <strong>admin@nexorait.lk</strong> or send a WhatsApp message to <strong>0766499254</strong>.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="#" id="renewContinueBtn" class="btn btn-primary">Continue</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         {{-- THIRD ROW --}}
         <div class="row g-4">
@@ -703,13 +779,7 @@
                                         <td>{{ $student->initial_name ?? '-' }}</td>
                                         <td>{{ $student->guardian_mobile ?? '-' }}</td>
                                         <td>{{ optional($student->created_at)->format('d M Y') }}</td>
-                                        <td>
-                                            @if($student->temporary_qr_code_expire_date && now()->diffInDays($student->temporary_qr_code_expire_date, false) <= 10)
-                                                <span class="badge bg-warning text-dark">Expiring Soon</span>
-                                            @else
-                                                <span class="badge bg-success">Active</span>
-                                            @endif
-                                        </td>
+                                        <td>@if($student->temporary_qr_code_expire_date && now()->diffInDays($student->temporary_qr_code_expire_date, false) <= 10)<span class="badge bg-warning text-dark">Expiring Soon</span>@else<span class="badge bg-success">Active</span>@endif</td>
                                     </tr>
                                 @empty
                                     <tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-inbox fs-2 d-block mb-2"></i>No students found.</td></tr>
@@ -724,88 +794,86 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    (function() {
-        'use strict';
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function() {
+            // Navigation handler for buttons
+            document.querySelectorAll('button[data-href]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const href = this.getAttribute('data-href');
+                    if (href && href !== '#') window.location.href = href;
+                });
+            });
 
-        let yearlyChart = null;
+            // Renew modal handler
+            const renewBtns = document.querySelectorAll('.renew-btn');
+            const renewContinue = document.getElementById('renewContinueBtn');
+            const renewNameSpan = document.getElementById('renewStudentName');
 
-        function formatCurrency(amount) {
-            return 'Rs. ' + parseFloat(amount).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
+            renewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const name = this.getAttribute('data-student-name');
+                    const url = this.getAttribute('data-renew-url');
+                    if (renewNameSpan) renewNameSpan.textContent = name || 'Student';
+                    if (renewContinue) renewContinue.href = url || '#';
+                });
+            });
 
-        function showLoading(show) {
-            const loader = document.getElementById('chartLoading');
-            if (loader) {
-                loader.style.display = show ? 'flex' : 'none';
+            // Chart logic
+            let yearlyChart = null;
+
+            function formatCurrency(amount) {
+                return 'Rs. ' + parseFloat(amount).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
-        }
 
-        function updateStats(totalData, instituteData, labels) {
-            const totalRevenue = totalData.reduce((a, b) => a + b, 0);
-            const instituteRevenue = instituteData.reduce((a, b) => a + b, 0);
-            
-            // Find best month
-            let maxTotal = 0, maxIndex = 0;
-            for (let i = 0; i < totalData.length; i++) {
-                if (totalData[i] > maxTotal) {
-                    maxTotal = totalData[i];
-                    maxIndex = i;
+            function showLoading(show) {
+                const loader = document.getElementById('chartLoading');
+                if (loader) loader.style.display = show ? 'flex' : 'none';
+            }
+
+            function updateStats(totalData, instituteData, labels) {
+                const totalRevenue = totalData.reduce((a, b) => a + b, 0);
+                const instituteRevenue = instituteData.reduce((a, b) => a + b, 0);
+                let maxTotal = 0, maxIndex = 0;
+                for (let i = 0; i < totalData.length; i++) {
+                    if (totalData[i] > maxTotal) { maxTotal = totalData[i]; maxIndex = i; }
                 }
-            }
-            
-            // Calculate growth rate (compare H1 vs H2)
-            const firstHalf = totalData.slice(0, 6).reduce((a, b) => a + b, 0);
-            const secondHalf = totalData.slice(6, 12).reduce((a, b) => a + b, 0);
-            const growthRate = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf * 100).toFixed(1) : 0;
-            
-            document.getElementById('totalRevenue').innerHTML = formatCurrency(totalRevenue);
-            document.getElementById('instituteIncome').innerHTML = formatCurrency(instituteRevenue);
-            document.getElementById('bestMonth').innerHTML = `${labels[maxIndex]} (${formatCurrency(maxTotal)})`;
-            
-            const growthElem = document.getElementById('growthRate');
-            growthElem.innerHTML = (growthRate >= 0 ? '+' : '') + growthRate + '%';
-            growthElem.style.color = growthRate >= 0 ? '#10b981' : '#ef4444';
-        }
+                const firstHalf = totalData.slice(0, 6).reduce((a, b) => a + b, 0);
+                const secondHalf = totalData.slice(6, 12).reduce((a, b) => a + b, 0);
+                const growthRate = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf * 100).toFixed(1) : 0;
 
-        function loadYearlyReport(year) {
-            showLoading(true);
-            
-            fetch(`{{ route('admin.institute-yearly-report') }}?year=${year}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response failed');
-                    return response.json();
-                })
-                .then(result => {
-                    if (!result.success) throw new Error(result.message || 'Failed to load data');
-                    
-                    const canvas = document.getElementById('yearlyPaymentChart');
-                    if (!canvas) return;
-                    
-                    const ctx = canvas.getContext('2d');
-                    
-                    if (yearlyChart) {
-                        yearlyChart.destroy();
-                    }
-                    
-                    // Create gradient fills
-                    const gradientTotal = ctx.createLinearGradient(0, 0, 0, 400);
-                    gradientTotal.addColorStop(0, 'rgba(37, 99, 235, 0.5)');
-                    gradientTotal.addColorStop(0.5, 'rgba(37, 99, 235, 0.2)');
-                    gradientTotal.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
-                    
-                    const gradientInstitute = ctx.createLinearGradient(0, 0, 0, 400);
-                    gradientInstitute.addColorStop(0, 'rgba(16, 185, 129, 0.5)');
-                    gradientInstitute.addColorStop(0.5, 'rgba(16, 185, 129, 0.2)');
-                    gradientInstitute.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
-                    
-                    yearlyChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: result.labels,
-                            datasets: [
-                                {
+                document.getElementById('totalRevenue').innerHTML = formatCurrency(totalRevenue);
+                document.getElementById('instituteIncome').innerHTML = formatCurrency(instituteRevenue);
+                document.getElementById('bestMonth').innerHTML = `${labels[maxIndex]} (${formatCurrency(maxTotal)})`;
+                const growthElem = document.getElementById('growthRate');
+                growthElem.innerHTML = (growthRate >= 0 ? '+' : '') + growthRate + '%';
+                growthElem.style.color = growthRate >= 0 ? '#10b981' : '#ef4444';
+            }
+
+            function loadYearlyReport(year) {
+                showLoading(true);
+                fetch(`{{ route('admin.institute-yearly-report') }}?year=${year}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.success) throw new Error(result.message);
+                        const canvas = document.getElementById('yearlyPaymentChart');
+                        if (!canvas) return;
+                        const ctx = canvas.getContext('2d');
+                        if (yearlyChart) yearlyChart.destroy();
+
+                        const gradientTotal = ctx.createLinearGradient(0, 0, 0, 400);
+                        gradientTotal.addColorStop(0, 'rgba(37, 99, 235, 0.5)');
+                        gradientTotal.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
+
+                        const gradientInstitute = ctx.createLinearGradient(0, 0, 0, 400);
+                        gradientInstitute.addColorStop(0, 'rgba(16, 185, 129, 0.5)');
+                        gradientInstitute.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
+
+                        yearlyChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: result.labels,
+                                datasets: [{
                                     label: 'Total Payments',
                                     data: result.total_payments,
                                     borderColor: '#2563eb',
@@ -814,12 +882,10 @@
                                     fill: true,
                                     tension: 0.4,
                                     pointRadius: 4,
-                                    pointHoverRadius: 7,
                                     pointBackgroundColor: '#2563eb',
                                     pointBorderColor: '#fff',
                                     pointBorderWidth: 2,
-                                },
-                                {
+                                }, {
                                     label: 'Institute Income',
                                     data: result.institution_payments,
                                     borderColor: '#10b981',
@@ -828,96 +894,38 @@
                                     fill: true,
                                     tension: 0.4,
                                     pointRadius: 4,
-                                    pointHoverRadius: 7,
                                     pointBackgroundColor: '#10b981',
                                     pointBorderColor: '#fff',
                                     pointBorderWidth: 2,
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            interaction: { intersect: false, mode: 'index' },
-                            plugins: {
-                                legend: { 
-                                    position: 'top',
-                                    labels: { usePointStyle: true, boxWidth: 8, font: { size: 11, weight: '600' } }
-                                },
-                                tooltip: {
-                                    backgroundColor: '#0f172a',
-                                    titleColor: '#fff',
-                                    bodyColor: '#94a3b8',
-                                    borderColor: '#2563eb',
-                                    borderWidth: 1,
-                                    callbacks: {
-                                        label: function(context) {
-                                            return `${context.dataset.label}: Rs. ${context.raw.toLocaleString('en-LK', { minimumFractionDigits: 2 })}`;
-                                        }
-                                    }
-                                }
+                                }]
                             },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { color: 'rgba(0,0,0,0.05)' },
-                                    ticks: {
-                                        callback: function(value) {
-                                            return 'Rs. ' + value.toLocaleString();
-                                        },
-                                        font: { size: 10 }
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: 'Amount (Rs.)',
-                                        font: { size: 11, weight: '600' },
-                                        color: '#64748b'
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: { intersect: false, mode: 'index' },
+                                plugins: {
+                                    legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
+                                    tooltip: {
+                                        backgroundColor: '#0f172a',
+                                        callbacks: { label: (ctx) => `${ctx.dataset.label}: Rs. ${ctx.raw.toLocaleString('en-LK', { minimumFractionDigits: 2 })}` }
                                     }
                                 },
-                                x: {
-                                    grid: { display: false },
-                                    ticks: { font: { size: 10, weight: '500' } },
-                                    title: {
-                                        display: true,
-                                        text: 'Months',
-                                        font: { size: 11, weight: '600' },
-                                        color: '#64748b'
-                                    }
+                                scales: {
+                                    y: { beginAtZero: true, ticks: { callback: (val) => 'Rs. ' + val.toLocaleString() } }
                                 }
                             }
-                        }
-                    });
-                    
-                    updateStats(result.total_payments, result.institution_payments, result.labels);
-                    showLoading(false);
-                })
-                .catch(error => {
-                    console.error('Chart Load Error:', error);
-                    showLoading(false);
-                    const canvas = document.getElementById('yearlyPaymentChart');
-                    if (canvas) {
-                        const ctx = canvas.getContext('2d');
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.font = '14px Inter, sans-serif';
-                        ctx.fillStyle = '#ef4444';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('Failed to load chart data', canvas.width / 2, canvas.height / 2);
-                    }
-                });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const yearSelector = document.getElementById('yearSelector');
-            const currentYear = yearSelector ? yearSelector.value : new Date().getFullYear();
-            
-            loadYearlyReport(currentYear);
-            
-            if (yearSelector) {
-                yearSelector.addEventListener('change', function() {
-                    loadYearlyReport(this.value);
-                });
+                        });
+                        updateStats(result.total_payments, result.institution_payments, result.labels);
+                        showLoading(false);
+                    })
+                    .catch(() => { showLoading(false); });
             }
-        });
-    })();
-</script>
+
+            const yearSelector = document.getElementById('yearSelector');
+            if (yearSelector) {
+                loadYearlyReport(yearSelector.value);
+                yearSelector.addEventListener('change', () => loadYearlyReport(yearSelector.value));
+            }
+        })();
+    </script>
 @endpush

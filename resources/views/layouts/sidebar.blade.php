@@ -3,7 +3,8 @@
     <!-- SIDEBAR HEADER -->
     <div class="sidebar-header">
 
-        <a href="{{ route('admin.dashboard') }}" class="brand text-decoration-none">
+        <button type="button" class="brand text-decoration-none" id="brandButton"
+            style="background: none; border: none; width: 100%; cursor: pointer; padding: 0;">
 
             <div class="brand-icon">
                 N
@@ -19,7 +20,7 @@
 
             </div>
 
-        </a>
+        </button>
 
     </div>
 
@@ -37,14 +38,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.dashboard') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                        data-route="admin.dashboard" data-href="{{ route('admin.dashboard') }}">
 
                         <i class="bi bi-speedometer2"></i>
 
                         <span>Dashboard</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -63,14 +65,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.system-users.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.system-users*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.system-users*') ? 'active' : '' }}"
+                        data-route="admin.system-users.index" data-href="{{ route('admin.system-users.index') }}">
 
                         <i class="bi bi-people-fill"></i>
 
                         <span>System User</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -80,14 +83,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.students.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.students.*') ? 'active' : '' }}"
+                        data-route="admin.students.index" data-href="{{ route('admin.students.index') }}">
 
                         <i class="bi bi-people-fill"></i>
 
                         <span>Students</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -97,14 +101,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.teachers.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}"
+                        data-route="admin.teachers.index" data-href="{{ route('admin.teachers.index') }}">
 
                         <i class="bi bi-person-badge-fill"></i>
 
                         <span>Teachers</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -114,14 +119,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.organizers.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.organizers.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.organizers.*') ? 'active' : '' }}"
+                        data-route="admin.organizers.index" data-href="{{ route('admin.organizers.index') }}">
 
                         <i class="bi bi-calendar-check-fill"></i>
 
                         <span>Organizers</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -140,14 +146,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.student-classes.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.student-classes.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.student-classes.*') ? 'active' : '' }}"
+                        data-route="admin.student-classes.index" data-href="{{ route('admin.student-classes.index') }}">
 
                         <i class="bi bi-book-fill"></i>
 
                         <span>Classes</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -157,14 +164,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.class-schedules.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.class-schedules.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.class-schedules.*') ? 'active' : '' }}"
+                        data-route="admin.class-schedules.index" data-href="{{ route('admin.class-schedules.index') }}">
 
                         <i class="bi bi-book-fill"></i>
 
                         <span>Class Schedule</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -174,14 +182,16 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.student-class-enrollments.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.student-class-enrollments.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.student-class-enrollments.*') ? 'active' : '' }}"
+                        data-route="admin.student-class-enrollments.index"
+                        data-href="{{ route('admin.student-class-enrollments.index') }}">
 
                         <i class="bi bi-pencil-square"></i>
 
                         <span>Enrollments</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -191,14 +201,16 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.class-schedules.todayClasses') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.class-schedules.todayClasses') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.class-schedules.todayClasses') ? 'active' : '' }}"
+                        data-route="admin.class-schedules.todayClasses"
+                        data-href="{{ route('admin.class-schedules.todayClasses') }}">
 
                         <i class="bi bi-calendar2-check-fill"></i>
 
                         <span>Attendance</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -217,14 +229,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.admissions.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.admissions.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.admissions.*') ? 'active' : '' }}"
+                        data-route="admin.admissions.index" data-href="{{ route('admin.admissions.index') }}">
 
                         <i class="bi bi-credit-card-fill"></i>
 
                         <span>Admissions</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -234,14 +247,16 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.admission-payments.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.admission-payments.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.admission-payments.*') ? 'active' : '' }}"
+                        data-route="admin.admission-payments.index"
+                        data-href="{{ route('admin.admission-payments.index') }}">
 
                         <i class="bi bi-credit-card-fill"></i>
 
                         <span>Admissions Payments</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -251,14 +266,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.payments.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}"
+                        data-route="admin.payments.index" data-href="{{ route('admin.payments.index') }}">
 
                         <i class="bi bi-credit-card-fill"></i>
 
                         <span>Payments</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -268,14 +284,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.teacher-salaries.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.teacher-salaries.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.teacher-salaries.*') ? 'active' : '' }}"
+                        data-route="admin.teacher-salaries.index" data-href="{{ route('admin.teacher-salaries.index') }}">
 
                         <i class="bi bi-cash-stack"></i>
 
                         <span>Teacher Salaries</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -285,14 +302,16 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.organizer-payments.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.organizer-payments.index') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.organizer-payments.index') ? 'active' : '' }}"
+                        data-route="admin.organizer-payments.index"
+                        data-href="{{ route('admin.organizer-payments.index') }}">
 
                         <i class="bi bi-wallet2"></i>
 
                         <span>Organizer Payments</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -302,14 +321,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.extra-incomes.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.extra-incomes.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.extra-incomes.*') ? 'active' : '' }}"
+                        data-route="admin.extra-incomes.index" data-href="{{ route('admin.extra-incomes.index') }}">
 
                         <i class="bi bi-cash-coin"></i>
 
                         <span>Extra Incomes</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -319,14 +339,16 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.institute-expenses.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.institute-expenses.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.institute-expenses.*') ? 'active' : '' }}"
+                        data-route="admin.institute-expenses.index"
+                        data-href="{{ route('admin.institute-expenses.index') }}">
 
                         <i class="bi bi-cash-coin"></i>
 
                         <span>Institute Expenses</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -336,14 +358,16 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.institute-income.monthly-report') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.institute-income.monthly-report') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.institute-income.monthly-report') ? 'active' : '' }}"
+                        data-route="admin.institute-income.monthly-report"
+                        data-href="{{ route('admin.institute-income.monthly-report') }}">
 
                         <i class="bi bi-bar-chart-line-fill"></i>
 
                         <span>Income Reports</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -352,11 +376,13 @@
             @if(hasPermission('admin.temporary-id-cards.index'))
 
                 <div class="nav-item">
-                    <a href="{{ route('admin.temporary-id-cards.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.temporary-id-cards.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.temporary-id-cards.*') ? 'active' : '' }}"
+                        data-route="admin.temporary-id-cards.index"
+                        data-href="{{ route('admin.temporary-id-cards.index') }}">
                         <i class="bi bi-book-fill"></i>
                         <span>Temporary ID</span>
-                    </a>
+                    </button>
                 </div>
 
             @endif
@@ -374,14 +400,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.daily-report.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.daily-report.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.daily-report.*') ? 'active' : '' }}"
+                        data-route="admin.daily-report.index" data-href="{{ route('admin.daily-report.index') }}">
 
                         <i class="bi bi-file-earmark-bar-graph"></i>
 
                         <span>Daily Report</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -390,14 +417,33 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.monthly-report.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.monthly-report.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.monthly-report.*') ? 'active' : '' }}"
+                        data-route="admin.monthly-report.index" data-href="{{ route('admin.monthly-report.index') }}">
 
                         <i class="bi bi-file-earmark-bar-graph"></i>
 
                         <span>Monthly Report</span>
 
-                    </a>
+                    </button>
+
+                </div>
+
+            @endif
+
+            @if(hasPermission('student-images.index'))
+
+                <div class="nav-item">
+
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.student-images.*') ? 'active' : '' }}"
+                        data-route="admin.student-images.index" data-href="{{ route('admin.student-images.index') }}">
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>Student Images</span>
+
+                    </button>
 
                 </div>
 
@@ -407,14 +453,15 @@
 
                 <div class="nav-item">
 
-                    <a href="{{ route('admin.teacher-report.index') }}"
-                        class="nav-link-custom {{ request()->routeIs('admin.teacher-report.*') ? 'active' : '' }}">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.teacher-report.*') ? 'active' : '' }}"
+                        data-route="admin.teacher-report.index" data-href="{{ route('admin.teacher-report.index') }}">
 
                         <i class="bi bi-file-earmark-bar-graph"></i>
 
                         <span>Teacher Report</span>
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -592,6 +639,14 @@
         font-weight: 500;
 
         transition: all 0.25s ease;
+
+        /* Button reset styles - keeps original look */
+        background: none;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
     }
 
     .nav-link-custom i {
@@ -638,3 +693,65 @@
         }
     }
 </style>
+
+<script>
+    (function () {
+        // Convert all sidebar navigation buttons to actual navigation handlers
+        const navButtons = document.querySelectorAll('#sidebar .nav-link-custom');
+        const brandButton = document.getElementById('brandButton');
+
+        // Function to handle navigation
+        function navigateTo(url, routeName, buttonElement) {
+            // Remove active class from all buttons
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Add active class to clicked button
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            }
+
+            // Actual navigation - redirect to the route URL
+            if (url && url !== '#') {
+                window.location.href = url;
+            }
+        }
+
+        // Add click handlers to all nav buttons
+        navButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-href');
+                const routeName = this.getAttribute('data-route');
+                navigateTo(url, routeName, this);
+            });
+        });
+
+        // Handle brand button click (navigate to dashboard)
+        if (brandButton) {
+            brandButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dashboardUrl = "{{ route('admin.dashboard') }}";
+
+                // Remove active from all nav buttons
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Find and activate dashboard button if exists
+                const dashboardBtn = Array.from(navButtons).find(btn =>
+                    btn.getAttribute('data-route') === 'admin.dashboard'
+                );
+                if (dashboardBtn) {
+                    dashboardBtn.classList.add('active');
+                }
+
+                // Navigate to dashboard
+                if (dashboardUrl && dashboardUrl !== '#') {
+                    window.location.href = dashboardUrl;
+                }
+            });
+        }
+    })();
+</script>
