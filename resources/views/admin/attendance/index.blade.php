@@ -533,7 +533,7 @@
             const storeAttendanceApiUrl = @json(route('api.attendance.store'));
             const storeEnrollmentApiUrl = @json(route('api.student-class-enrollments.store'));
 
-            const defaultStudentImage = @json(asset('images/default-student.png'));
+            const defaultStudentImage = @json(asset('storage/uploads/male.png'));
 
             const classScheduleId = @json(request('class_schedule_id'));
             const studentClassId = @json(request('student_class_id'));

@@ -73,8 +73,8 @@ class StudentRegisterController extends Controller
             $customId = $this->generateCustomId((int) $validated['grade_id']);
 
             $imgUrl = match ($validated['gender']) {
-                'female' => 'uploads/default-images/female.png',
-                default  => 'uploads/default-images/male.png',
+                'female' => 'uploads/female.png',
+                default  => 'uploads/male.png',
             };
 
             $quickPhoto = null;

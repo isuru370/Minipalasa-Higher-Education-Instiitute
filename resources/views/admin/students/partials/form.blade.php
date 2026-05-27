@@ -68,7 +68,7 @@
                 <div class="col-md-3">
                     <div class="image-preview-wrapper">
                         <img id="imagePreview" src="{{ $studentImage }}" alt="Student Image" class="image-preview"
-                            onerror="this.src='{{ asset('images/default-student.png') }}'">
+                            onerror="this.src='{{ asset('storage/uploads/male.png') }}'">
                     </div>
                 </div>
 

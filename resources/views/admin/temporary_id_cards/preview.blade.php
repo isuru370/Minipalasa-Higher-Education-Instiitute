@@ -43,7 +43,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 18px;
-            background: url('{{ asset('uploads/id/temporary.png') }}') center/cover no-repeat;
+            background: url('{{ asset('storage/id/temporary.png') }}') center/cover no-repeat;
             margin: auto;
             box-shadow: 0 5px 20px rgba(0, 0, 0, .12);
         }
@@ -281,7 +281,7 @@
                         @foreach($pageCodes as $item)
                             <div class="id-card">
                                 <div class="logo-section">
-                                    <img src="{{ asset('uploads/logo/black_logo.png') }}" class="logo-img" alt="Logo">
+                                    <img src="{{ asset('storage/logo/black_logo.png') }}" class="logo-img" alt="Logo">
 
                                     <div class="institute-name">
                                         <div class="title">MINIPAHANA</div>

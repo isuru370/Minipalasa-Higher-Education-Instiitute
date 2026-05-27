@@ -18,12 +18,12 @@ class ImageUploadController extends Controller
 
     public function uploadStudentImage(Request $request)
     {
-        return $this->uploadImage($request, 'uploads/students/original');
+        return $this->uploadImage($request, 'uploads');
     }
 
     public function uploadQuickPhoto(Request $request)
     {
-        return $this->uploadImage($request, 'uploads/quick_photos/original');
+        return $this->uploadImage($request, 'uploads');
     }
 
     private function uploadImage(Request $request, string $folder)
@@ -52,7 +52,6 @@ class ImageUploadController extends Controller
                 'path' => $path,
                 'url' => asset('storage/' . $path),
             ]);
-
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
@@ -75,7 +74,6 @@ class ImageUploadController extends Controller
                 'status' => true,
                 'message' => 'Image deleted successfully.',
             ]);
-
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,

@@ -606,7 +606,7 @@
 
                     <div class="modal-body modal-body-custom">
                         <div class="photo-preview">
-                            <img id="modalPhotoPreview" src="{{ asset('images/default-avatar.png') }}" alt="Photo Preview"
+                            <img id="modalPhotoPreview" src="{{ asset('storage/logo/black_logo.png') }}" alt="Photo Preview"
                                 class="photo-preview-img">
                             <div class="mt-2">
                                 <code id="modalPhotoCode" class="bg-light px-2 py-1 rounded">-</code>
