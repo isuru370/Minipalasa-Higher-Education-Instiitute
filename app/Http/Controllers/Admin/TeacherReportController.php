@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\DailyReport\DailyReportExport;
+use App\Exports\Teacher\TeacherExpenseExport;
 use App\Http\Controllers\Controller;
+use App\Models\Teacher;
+use App\Models\TeacherPayment;
 use App\Services\DailyReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -201,5 +205,141 @@ class TeacherReportController extends Controller
         }
 
         return $rows;
+    }
+
+    public function teacherExpenseReport(Request $request): JsonResponse
+    {
+        try {
+            $data = $this->buildTeacherExpenseReport($request);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Teacher expense report fetched successfully.',
+                'date' => $data['date'],
+                'teacher_id' => $data['teacherId'],
+                'data' => $data['report'],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Teacher expense report error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while fetching teacher expense report.',
+            ], 500);
+        }
+    }
+
+    public function teacherExpenseReportExcel(Request $request)
+    {
+        try {
+            $data = $this->buildTeacherExpenseReport($request);
+
+            return Excel::download(
+                new TeacherExpenseExport($data['payments'], $data['teacherId'], $data['year'], $data['month']),
+                "teacher_expense_{$data['teacherId']}_{$data['year']}_{$data['month']}.xlsx"
+            );
+        } catch (\Throwable $e) {
+            Log::error('Teacher expense excel error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while downloading Excel report.',
+            ], 500);
+        }
+    }
+
+    public function teacherExpenseReportPdf(Request $request)
+{
+    try {
+        $data = $this->buildTeacherExpenseReport($request);
+
+        if (!view()->exists('admin.pdf.teacher.teacher_expense')) {
+            throw new \Exception('PDF view not found: admin.pdf.teacher.teacher_expense');
+        }
+
+        $pdf = Pdf::loadView('admin.pdf.teacher.teacher_expense', [
+            'payments' => $data['report'],
+            'date' => $data['date'],
+            'teacher_id' => $data['teacherId'],
+            'teacher_name' => $data['teacherName'],
+            'year' => $data['year'],
+            'month' => $data['month'],
+        ]);
+
+        return $pdf->download("teacher_expense_{$data['teacherId']}_{$data['year']}_{$data['month']}.pdf");
+    } catch (\Throwable $e) {
+        Log::error('Teacher expense pdf error', [
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+    private function buildTeacherExpenseReport(Request $request): array
+    {
+        $year = $request->query('year', Carbon::now()->year);
+        $month = $request->query('month', Carbon::now()->month);
+        $teacherId = $request->query('teacher_id');
+
+        if (!$teacherId) {
+            throw new \InvalidArgumentException('teacher_id is required');
+        }
+
+        $teacher = Teacher::select('id', 'custom_id', 'initials')
+            ->find($teacherId);
+
+        if (!$teacher) {
+            throw new \Exception('Teacher not found');
+        }
+
+        $teacherName = trim(($teacher->custom_id ?? '') . ' - ' . ($teacher->initials ?? ''));
+
+        $date = Carbon::createFromDate($year, $month, 1)->toDateString();
+
+        $payments = TeacherPayment::with('createdBy:id,name')
+            ->where('teacher_id', $teacherId)
+            ->whereYear('payment_date', $year)
+            ->whereMonth('payment_date', $month)
+            ->whereIn('status', ['paid', 'cancelled'])
+            ->get();
+
+        $report = $payments->map(function ($payment) use ($teacherName) {
+            return [
+                'payment_id' => $payment->id,
+                'payment_type' => $payment->payment_type,
+                'amount' => $payment->amount,
+                'payment_date' => optional($payment->payment_date)->toDateString(),
+                'reason' => $payment->reason,
+                'note' => $payment->note,
+                'created_by' => optional($payment->createdBy)->name,
+                'status' => $payment->status,
+                'teacher_name' => $teacherName,
+            ];
+        });
+
+        return [
+            'year' => $year,
+            'month' => $month,
+            'date' => $date,
+            'teacherId' => $teacherId,
+            'teacherName' => $teacherName,
+            'payments' => $payments,
+            'report' => $report,
+        ];
     }
 }

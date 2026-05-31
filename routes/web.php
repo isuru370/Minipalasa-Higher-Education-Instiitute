@@ -672,10 +672,15 @@ Route::middleware([
         Route::get('daily-report/summary/pdf', [DailyReportController::class, 'downloadSummaryPdf'])->name('daily-report.summary.pdf');
         Route::get('daily-report/summary/excel', [DailyReportController::class, 'downloadSummaryExcel'])->name('daily-report.summary.excel');
 
-
+        // Teacher Report Routes
         Route::get('/teacher-report', [TeacherReportController::class, 'index'])->name('teacher-report.index');
         Route::get('/teacher-report/pdf', [TeacherReportController::class, 'downloadTeacherWithStudentPaymentsPdf'])->name('teacher-report.pdf');
         Route::get('/teacher-report/excel', [TeacherReportController::class, 'downloadTeacherWithStudentPaymentsExcel'])->name('teacher-report.excel');
+        // Teacher Expense Report
+        Route::get('/teacher-report/expense', [TeacherReportController::class, 'teacherExpenseReport'])->name('teacher-expense-report');
+        Route::get('/teacher-report/expense/excel', [TeacherReportController::class, 'teacherExpenseReportExcel'])->name('teacher-expense-report.excel');
+        Route::get('/teacher-report/expense/pdf', [TeacherReportController::class, 'teacherExpenseReportPdf'])->name('teacher-expense-report.pdf');
+
         Route::get('/monthly-report', [MonthlyReportController::class, 'index'])
             ->name('monthly-report.index');
 
