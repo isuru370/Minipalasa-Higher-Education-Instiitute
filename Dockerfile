@@ -39,7 +39,7 @@ COPY . .
 # ----------------------------
 # Install Laravel dependencies
 # ----------------------------
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --no-scripts
+RUN composer install -vvv --no-interaction --prefer-dist --no-dev --no-scripts
 
 # ----------------------------
 # Set Apache document root to /public
