@@ -1,4 +1,4 @@
-FROM php:8.1-apache
+FROM php:8.2-apache
 
 # ----------------------------
 # Enable required Apache modules
@@ -18,7 +18,15 @@ RUN apt-get update && apt-get install -y \
     git unzip zip curl libzip-dev libonig-dev libpng-dev \
     libxml2-dev libicu-dev libjpeg-dev libfreetype6-dev build-essential \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring bcmath gd zip intl \
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        mbstring \
+        bcmath \
+        gd \
+        zip \
+        intl \
+        exif \
     && rm -rf /var/lib/apt/lists/*
 
 # ----------------------------
@@ -39,16 +47,15 @@ COPY . .
 # ----------------------------
 # Install Laravel dependencies
 # ----------------------------
-RUN bash -lc 'composer install -vvv --no-interaction --prefer-dist --no-dev --no-scripts 2>&1 | tee /tmp/composer.log'
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 # ----------------------------
 # Set Apache document root to /public
 # ----------------------------
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" \
+RUN sed -ri 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/*.conf \
     /etc/apache2/apache2.conf
-    
 
 # ----------------------------
 # Fix Laravel permissions
