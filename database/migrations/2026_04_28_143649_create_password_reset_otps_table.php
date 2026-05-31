@@ -15,7 +15,7 @@ class CreatePasswordResetOtpsTable extends Migration
             $table->string('email')->index();
 
             // OTP (6 digits)
-            $table->string('otp', 6);
+            $table->string('otp', 255);
 
             // expiry time
             $table->timestamp('expires_at');

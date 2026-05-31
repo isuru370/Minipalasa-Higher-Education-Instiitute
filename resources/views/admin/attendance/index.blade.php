@@ -4,9 +4,7 @@
 @section('page-title', 'Attendance')
 
 @section('content')
-
     <div class="attendance-page">
-
         <!-- HERO -->
         <div class="hero-card mb-4">
             <div class="hero-content">
@@ -34,7 +32,6 @@
         <!-- ALERT -->
         <div id="attendanceAlert" class="alert alert-info d-none shadow-sm custom-alert" data-persist-alert="true"
             role="alert">
-
             <div class="d-flex align-items-start gap-2">
                 <i class="bi bi-info-circle-fill fs-5 mt-1" id="alertIcon"></i>
 
@@ -50,10 +47,8 @@
         </div>
 
         <div class="row g-4">
-
             <!-- LEFT SIDE -->
             <div class="col-lg-4">
-
                 <div class="panel-card h-100">
                     <div class="panel-header">
                         <h6 class="mb-0 fw-bold">QR Reader</h6>
@@ -77,7 +72,6 @@
                         </ul>
 
                         <div class="tab-content">
-
                             <!-- SCAN -->
                             <div class="tab-pane fade show active" id="scanTab">
                                 <div id="qr-reader" class="qr-reader-box"></div>
@@ -128,16 +122,13 @@
                                     </div>
                                 </form>
                             </div>
-
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- RIGHT SIDE -->
             <div class="col-lg-8">
-
                 <!-- EMPTY STATE -->
                 <div id="emptyStateCard" class="panel-card">
                     <div class="panel-body text-center py-5">
@@ -161,7 +152,7 @@
                     <div class="panel-body">
                         <div class="row align-items-center g-4">
                             <div class="col-md-3 text-center">
-                                <img id="studentImage" src="{{ asset('images/default-student.png') }}" class="student-image"
+                                <img id="studentImage" src="{{ asset('storage/uploads/male.png') }}" class="student-image"
                                     alt="Student Image">
                             </div>
 
@@ -208,32 +199,7 @@
                     </div>
 
                     <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table custom-table align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Class</th>
-                                        <th>Grade</th>
-                                        <th>Subject</th>
-                                        <th>Teacher</th>
-                                        <th>Category</th>
-                                        <th>Final Fee</th>
-                                        <th>Last Payment</th>
-                                        <th>Attendance</th>
-                                        <th width="230" class="text-end">Action</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="attendanceTableBody">
-                                    <tr>
-                                        <td colspan="10" class="text-center text-muted py-4">
-                                            No details found.
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <div id="attendanceDetailsContent"></div>
                     </div>
                 </div>
 
@@ -246,7 +212,6 @@
                         <div id="errorDetails"></div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -264,7 +229,6 @@
                     </div>
 
                     <div class="modal-body pt-0">
-
                         <div class="alert alert-light border">
                             <div><strong>Student:</strong> <span id="modalStudentName">-</span></div>
                             <div><strong>Class:</strong> <span id="modalClassName">-</span></div>
@@ -342,7 +306,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('styles')
@@ -473,6 +436,37 @@
             padding: 1rem;
         }
 
+        .attendance-detail-card {
+            background: #fff;
+            border-radius: 24px;
+        }
+
+        .info-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 16px;
+            height: 100%;
+            transition: .2s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .05);
+        }
+
+        .info-card small {
+            color: #64748b;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .info-card h6 {
+            margin: 0;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
         .custom-table tbody td {
             padding: 1rem;
             border-color: #f1f5f9;
@@ -532,7 +526,6 @@
             const readApiUrl = @json(route('api.attendance.read'));
             const storeAttendanceApiUrl = @json(route('api.attendance.store'));
             const storeEnrollmentApiUrl = @json(route('api.student-class-enrollments.store'));
-
             const defaultStudentImage = @json(asset('storage/uploads/male.png'));
 
             const classScheduleId = @json(request('class_schedule_id'));
@@ -556,7 +549,7 @@
             const studentMobile = document.getElementById('studentMobile');
             const guardianMobile = document.getElementById('guardianMobile');
             const qrTypeBadge = document.getElementById('qrTypeBadge');
-            const attendanceTableBody = document.getElementById('attendanceTableBody');
+            const attendanceDetailsContent = document.getElementById('attendanceDetailsContent');
 
             const manualQrForm = document.getElementById('manualQrForm');
             const manualQrCode = document.getElementById('manualQrCode');
@@ -573,7 +566,6 @@
             const modalStudentName = document.getElementById('modalStudentName');
             const modalClassName = document.getElementById('modalClassName');
             const modalCategoryName = document.getElementById('modalCategoryName');
-
             const modalIsFreeCard = document.getElementById('modalIsFreeCard');
             const modalCustomFee = document.getElementById('modalCustomFee');
             const modalCustomFeeReason = document.getElementById('modalCustomFeeReason');
@@ -597,7 +589,6 @@
                 const safeType = ['success', 'danger', 'warning', 'info'].includes(type) ? type : 'info';
 
                 alertBox.className = `alert alert-${safeType} shadow-sm custom-alert`;
-                alertBox.setAttribute('data-persist-alert', 'true');
                 alertBox.classList.remove('d-none');
                 alertBox.style.display = 'block';
 
@@ -623,6 +614,22 @@
                 alertMessage.textContent = '';
             }
 
+            function hideErrorDetails() {
+                if (errorDetailsCard) errorDetailsCard.classList.add('d-none');
+                if (errorDetails) errorDetails.innerHTML = '';
+            }
+
+            function showErrorDetails(message) {
+                if (!errorDetailsCard || !errorDetails) return;
+
+                errorDetails.innerHTML = `
+                                                    <div class="alert alert-danger mb-0">
+                                                        ${escapeHtml(message || 'Unknown error')}
+                                                    </div>
+                                                `;
+                errorDetailsCard.classList.remove('d-none');
+            }
+
             function setReadButtonLoading(isLoading) {
                 if (!manualReadBtn) return;
 
@@ -630,6 +637,16 @@
                 manualReadBtn.innerHTML = isLoading
                     ? '<span class="spinner-border spinner-border-sm me-1"></span>Processing...'
                     : '<i class="bi bi-person-check-fill me-1"></i>Read Student';
+            }
+
+            function setMarkButtonLoading(isLoading) {
+                const button = document.getElementById('markAttendanceBtn');
+                if (!button) return;
+
+                button.disabled = isLoading;
+                button.innerHTML = isLoading
+                    ? '<span class="spinner-border spinner-border-sm me-1"></span>Marking...'
+                    : 'Mark Attendance';
             }
 
             async function postJson(url, payload) {
@@ -657,12 +674,45 @@
                 return { ok: response.ok, status: response.status, result };
             }
 
+            function hasEnrollment(enrollment) {
+                return Boolean(
+                    enrollment && (
+                        enrollment.is_enrolled === true ||
+                        String(enrollment.status || '').toLowerCase() === 'enrolled' ||
+                        enrollment.enrollment_id !== null
+                    )
+                );
+            }
+
+            function normalizeEnrollment(enrollment) {
+                const e = enrollment || {};
+
+                return {
+                    status: String(e.status || e.enrollment_status || '').toLowerCase(),
+                    is_enrolled: e.is_enrolled === true || e.is_enrolled === 1 || String(e.status || '').toLowerCase() === 'enrolled' || !!e.enrollment_id,
+                    enrollment_id: e.enrollment_id ?? e.id ?? null,
+                    student_class_id: e.student_class_id ?? e.studentClass?.id ?? null,
+                    class_category_fee_id: e.class_category_fee_id ?? e.classCategoryFee?.id ?? null,
+                    class_name: e.class_name ?? e.studentClass?.class_name ?? e.studentClass?.name ?? '-',
+                    grade: e.grade ?? e.grade_name ?? e.studentClass?.grade?.grade_name ?? e.studentClass?.grade?.name ?? '-',
+                    teacher: e.teacher ?? e.teacher_name ?? e.studentClass?.teacher?.name ?? '-',
+                    category_name: e.category_name ?? e.classCategoryFee?.category?.category_name ?? e.classCategoryFee?.category?.name ?? '-',
+                    default_fee: e.default_fee ?? e.classCategoryFee?.default_fee ?? '-',
+                    final_fee: e.final_fee ?? e.classCategoryFee?.final_fee ?? e.default_fee ?? '-',
+                };
+            }
+
+            function getIssueTuteValue() {
+                const checkbox = document.getElementById('issueTuteCheckbox');
+                return checkbox && checkbox.checked ? 1 : 0;
+            }
+
             async function readStudent(qrCode, method = 'qr_web') {
                 const code = String(qrCode || '').trim();
 
                 currentMarkMethod = method;
-
                 hideAlert();
+                hideErrorDetails();
 
                 if (!code) {
                     showAlert('warning', 'Please enter or scan QR code.');
@@ -686,28 +736,35 @@
                         class_category_fee_id: classCategoryFeeId,
                     });
 
-                    const result = response.result;
+                    const result = response.result || {};
+                    const isSuccess = response.ok && (result.status === 'success' || result.success === true);
 
-                    if (!response.ok || result.status !== 'success') {
+                    if (!isSuccess) {
                         resetView();
                         showAlert('danger', result.message || 'Student read failed.');
+                        showErrorDetails(result.message || 'Student read failed.');
                         return;
                     }
 
+                    const payload = result.data || {};
+
                     currentQrCode = code;
-                    currentStudent = result.data.student;
-                    currentEnrollment = result.data.enrollment;
+                    currentStudent = payload.student || null;
+                    currentEnrollment = pickEnrollmentFromResponse(payload);
+
+                    console.log('SELECTED ENROLLMENT =>', currentEnrollment);
 
                     renderStudent(currentStudent);
-                    renderAttendanceDetails(result.data);
+                    renderAttendanceDetails(payload);
 
+                    hideErrorDetails();
                     showAlert('success', result.message || 'Student attendance details loaded successfully.');
                     manualQrCode.value = code;
-
                 } catch (error) {
                     console.error(error);
                     resetView();
                     showAlert('danger', 'Something went wrong while reading student.');
+                    showErrorDetails('Something went wrong while reading student.');
                 } finally {
                     processing = false;
                     setReadButtonLoading(false);
@@ -715,6 +772,11 @@
             }
 
             function renderStudent(student) {
+                if (!student) {
+                    resetView();
+                    return;
+                }
+
                 emptyStateCard.classList.add('d-none');
                 studentDetailsCard.classList.remove('d-none');
                 attendanceDetailsCard.classList.remove('d-none');
@@ -731,77 +793,182 @@
                 guardianMobile.textContent = student.guardian_mobile || '-';
 
                 qrTypeBadge.textContent = student.qr_type === 'temporary' ? 'Temporary QR' : 'Permanent QR';
-                qrTypeBadge.className = student.qr_type === 'temporary'
-                    ? 'badge bg-warning text-dark'
-                    : 'badge bg-success';
+                qrTypeBadge.className = student.qr_type === 'temporary' ? 'badge bg-warning text-dark' : 'badge bg-success';
             }
 
             function renderAttendanceDetails(data) {
-                const enrollment = data.enrollment || {};
-                const attendance = data.attendance || {};
-                const lastPayment = data.last_payment || null;
-                const isNewStudent = enrollment.status === 'new_student';
+                const selectedEnrollmentRaw = pickEnrollmentFromResponse(data);
+                const enrollment = normalizeEnrollment(selectedEnrollmentRaw);
 
-                attendanceTableBody.innerHTML = `
-                                    <tr>
-                                        <td>
-                                            ${isNewStudent
-                        ? '<span class="badge bg-warning text-dark">New Student</span>'
-                        : '<span class="badge bg-success">Enrolled</span>'
-                    }
-                                        </td>
+                const attendance = data?.attendance || {};
+                const lastPayment = data?.last_payment || null;
+                const tute = data?.tute || null;
 
-                                        <td>
-                                            <div class="fw-bold">${escapeHtml(enrollment.class_name)}</div>
-                                            <small class="text-muted">Class ID: ${escapeHtml(enrollment.student_class_id)}</small>
-                                        </td>
+                const enrollmentExists = hasEnrollment(enrollment);
+                const statusLabel = enrollmentExists ? 'Enrolled' : 'New Student';
+                const statusBadgeClass = enrollmentExists ? 'badge bg-success' : 'badge bg-warning text-dark';
 
-                                        <td>${escapeHtml(enrollment.grade)}</td>
-                                        <td>${escapeHtml(enrollment.subject)}</td>
-                                        <td>${escapeHtml(enrollment.teacher)}</td>
+                const studentClassIdValue = enrollment.student_class_id ?? studentClassId ?? '-';
+                const feeIdValue = enrollment.class_category_fee_id ?? classCategoryFeeId ?? '-';
 
-                                        <td>
-                                            <div>${escapeHtml(enrollment.category_name)}</div>
-                                            <small class="text-muted">Fee ID: ${escapeHtml(enrollment.class_category_fee_id)}</small>
-                                        </td>
+                const className = enrollment.class_name;
+                const grade = enrollment.grade;
+                const teacher = enrollment.teacher;
+                const categoryName = enrollment.category_name;
+                const finalFeeValue = enrollment.final_fee;
+                const defaultFeeValue = enrollment.default_fee;
 
-                                        <td>
-                                            <div class="fw-bold">${formatMoney(enrollment.final_fee)}</div>
-                                            <small class="text-muted">Default: ${formatMoney(enrollment.default_fee)}</small>
-                                        </td>
+                const paymentHtml = lastPayment
+                    ? `
+                <div class="fw-bold">${formatMoney(lastPayment.amount)}</div>
+                <small class="text-muted d-block">Month: ${escapeHtml(lastPayment.payment_month)}</small>
+                <small class="text-info d-block">Paid: ${escapeHtml(lastPayment.paid_at)}</small>
+            `
+                    : '<span class="badge bg-danger">No Payment Yet</span>';
 
-                                        <td>${renderLastPayment(lastPayment)}</td>
+                const tuteHtml = tute?.is_issued
+                    ? '<span class="badge bg-info text-dark">Tute issued</span>'
+                    : '';
 
-                                        <td>
-                                            <div class="fw-bold">${attendance.attended_classes ?? 0} / ${attendance.total_classes ?? 0}</div>
-                                            <small class="text-muted">
-                                                ${attendance.attendance_percentage ?? 0}%
-                                                ${attendance.month ? '(' + escapeHtml(attendance.month) + ')' : ''}
-                                            </small>
-                                        </td>
+                attendanceDetailsContent.innerHTML = `
+            <div class="attendance-detail-card">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="info-card">
+                            <small>Status</small>
+                            <div class="mt-2">
+                                <span class="${statusBadgeClass}">${statusLabel}</span>
+                            </div>
+                        </div>
+                    </div>
 
-                                        <td>
-                                            <div class="d-flex gap-1 flex-wrap justify-content-end">
-                                                ${isNewStudent
-                        ? `
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-primary custom-btn"
-                                                                    id="addClassBtn">
-                                                                Add Class
-                                                            </button>
-                                                        `
-                        : ''
-                    }
+                    <div class="col-md-3">
+                        <div class="info-card">
+                            <small>Class</small>
+                            <h6>${escapeHtml(className)}</h6>
+                            <span class="text-muted">Class ID: ${escapeHtml(studentClassIdValue)}</span>
+                        </div>
+                    </div>
 
-                                                <button type="button"
-                                                        class="btn btn-sm btn-success custom-btn"
-                                                        id="markAttendanceBtn">
-                                                    Mark Attendance
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `;
+                    <div class="col-md-2">
+                        <div class="info-card">
+                            <small>Grade</small>
+                            <h6>${escapeHtml(grade)}</h6>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="info-card">
+                            <small>Teacher</small>
+                            <h6>${escapeHtml(teacher)}</h6>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="info-card">
+                            <small>Category</small>
+                            <h6>${escapeHtml(categoryName)}</h6>
+                            <span class="text-muted">Fee ID: ${escapeHtml(feeIdValue)}</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="info-card">
+                            <small>Final Fee</small>
+                            <h6>${formatMoney(finalFeeValue)}</h6>
+                            <span class="text-muted">Default: ${formatMoney(defaultFeeValue)}</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="info-card">
+                            <small>Last Payment</small>
+                            ${paymentHtml}
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="info-card">
+                            <small>Attendance</small>
+                            <h6>${attendance.attended_classes ?? 0} / ${attendance.total_classes ?? 0}</h6>
+                            <span class="text-muted">
+                                ${attendance.attendance_percentage ?? 0}%
+                                ${attendance.month ? '(' + escapeHtml(attendance.month) + ')' : ''}
+                            </span>
+                            ${tuteHtml ? `<div class="mt-2">${tuteHtml}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 flex-wrap mt-4">
+                    ${enrollmentExists ? `
+                        <div class="form-check d-flex align-items-center gap-2 me-2">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="issueTuteCheckbox"
+                                ${tute?.is_issued ? 'checked' : ''}
+                            >
+                            <label class="form-check-label" for="issueTuteCheckbox">
+                                Issue Tute
+                            </label>
+                        </div>
+                    ` : ''}
+
+                    <button type="button" class="btn btn-primary custom-btn" id="addClassBtn">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Add Class
+                    </button>
+
+                    <button type="button" class="btn btn-success custom-btn" id="markAttendanceBtn">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Mark Attendance
+                    </button>
+                </div>
+            </div>
+        `;
+            }
+
+            function pickEnrollmentFromResponse(data) {
+                const enrollments = Array.isArray(data?.enrollments) ? data.enrollments : [];
+
+                if (!enrollments.length) {
+                    return {};
+                }
+
+                const matched = enrollments.find((item) => {
+                    const itemStudentClassId = Number(item?.student_class_id ?? item?.studentClass?.id ?? 0);
+                    const itemFeeId = Number(item?.class_category_fee_id ?? item?.classCategoryFee?.id ?? 0);
+
+                    return (
+                        itemStudentClassId === Number(studentClassId) &&
+                        itemFeeId === Number(classCategoryFeeId)
+                    );
+                });
+
+                return matched || enrollments[0] || {};
+            }
+
+            function normalizeEnrollment(enrollment) {
+                const e = enrollment || {};
+
+                return {
+                    status: String(e.status || e.enrollment_status || '').toLowerCase(),
+                    is_enrolled:
+                        e.is_enrolled === true ||
+                        e.is_enrolled === 1 ||
+                        String(e.status || '').toLowerCase() === 'enrolled' ||
+                        !!e.enrollment_id,
+                    enrollment_id: e.enrollment_id ?? e.id ?? null,
+                    student_class_id: e.student_class_id ?? e.studentClass?.id ?? null,
+                    class_category_fee_id: e.class_category_fee_id ?? e.classCategoryFee?.id ?? null,
+                    class_name: e.class_name ?? e.studentClass?.class_name ?? e.studentClass?.name ?? '-',
+                    grade: e.grade ?? e.grade_name ?? e.studentClass?.grade?.grade_name ?? e.studentClass?.grade?.name ?? '-',
+                    teacher: e.teacher ?? e.teacher_name ?? e.studentClass?.teacher?.name ?? '-',
+                    category_name: e.category_name ?? e.classCategoryFee?.category?.category_name ?? e.classCategoryFee?.category?.name ?? '-',
+                    default_fee: e.default_fee ?? e.classCategoryFee?.default_fee ?? '-',
+                    final_fee: e.final_fee ?? e.classCategoryFee?.final_fee ?? e.default_fee ?? '-',
+                };
             }
 
             function renderLastPayment(payment) {
@@ -810,10 +977,10 @@
                 }
 
                 return `
-                                    <div class="fw-bold">${formatMoney(payment.amount)}</div>
-                                    <small class="text-muted">Month: ${escapeHtml(payment.payment_month)}</small><br>
-                                    <small class="text-info">Paid: ${escapeHtml(payment.paid_at)}</small>
-                                `;
+                                                    <div class="fw-bold">${formatMoney(payment.amount)}</div>
+                                                    <small class="text-muted">Month: ${escapeHtml(payment.payment_month)}</small><br>
+                                                    <small class="text-info">Paid: ${escapeHtml(payment.paid_at)}</small>
+                                                `;
             }
 
             async function markAttendance() {
@@ -822,54 +989,69 @@
                     return;
                 }
 
-                if (!classScheduleId || !studentClassId || !classCategoryFeeId) {
-                    showAlert('danger', 'Required class details missing.');
+                if (!classScheduleId) {
+                    showAlert('danger', 'Class schedule ID is missing.');
+                    return;
+                }
+
+                if (!currentStudent?.id) {
+                    showAlert('danger', 'Student ID is missing.');
+                    return;
+                }
+
+                const issueTute = getIssueTuteValue();
+                const enrollmentExists = hasEnrollment(currentEnrollment);
+
+                if (issueTute && !enrollmentExists) {
+                    showAlert('warning', 'Student must be enrolled before issuing a tute.');
                     return;
                 }
 
                 try {
-                    const button = document.getElementById('markAttendanceBtn');
-
-                    if (button) {
-                        button.disabled = true;
-                        button.textContent = 'Marking...';
-                    }
+                    setMarkButtonLoading(true);
 
                     const response = await postJson(storeAttendanceApiUrl, {
+                        student_id: currentStudent.id,
                         qr_code: currentQrCode,
                         class_schedule_id: classScheduleId,
                         student_class_id: studentClassId,
                         class_category_fee_id: classCategoryFeeId,
                         mark_method: currentMarkMethod,
+                        mark_tute: issueTute,
                         note: null,
                     });
 
-                    const result = response.result;
+                    const result = response.result || {};
+                    const isSuccess = response.ok && (result.status === 'success' || result.success === true);
 
-                    if (!response.ok || result.status !== 'success') {
-                        showAlert('danger', result.message || 'Attendance mark failed.');
+                    if (!isSuccess) {
+                        const validationMessage =
+                            result.message ||
+                            (result.errors ? Object.values(result.errors).flat().join(' ') : 'Attendance mark failed.');
+
+                        showAlert('danger', validationMessage);
                         return;
                     }
 
                     showAlert('success', result.message || 'Attendance marked successfully.');
-
-                    await readStudent(currentQrCode);
-
+                    await readStudent(currentQrCode, currentMarkMethod);
                 } catch (error) {
                     console.error(error);
                     showAlert('danger', 'Something went wrong while marking attendance.');
+                } finally {
+                    setMarkButtonLoading(false);
                 }
             }
 
             function openAddClassModal() {
-                if (!currentStudent || !currentEnrollment) {
+                if (!currentStudent) {
                     showAlert('warning', 'Please read a student first.');
                     return;
                 }
 
                 modalStudentName.textContent = currentStudent.initial_name || currentStudent.custom_id || '-';
-                modalClassName.textContent = currentEnrollment.class_name || '-';
-                modalCategoryName.textContent = currentEnrollment.category_name || '-';
+                modalClassName.textContent = currentEnrollment?.class_name || '-';
+                modalCategoryName.textContent = currentEnrollment?.category_name || '-';
 
                 modalIsFreeCard.value = '0';
                 modalCustomFee.value = '';
@@ -905,9 +1087,10 @@
                     };
 
                     const response = await postJson(storeEnrollmentApiUrl, payload);
-                    const result = response.result;
+                    const result = response.result || {};
+                    const isSuccess = response.ok && (result.status === 'success' || result.success === true);
 
-                    if (!response.ok || result.status !== 'success') {
+                    if (!isSuccess) {
                         showAlert('danger', result.message || 'Student class enrollment failed.');
                         return;
                     }
@@ -915,16 +1098,17 @@
                     addClassModal?.hide();
                     showAlert('success', 'Student enrolled successfully.');
 
-                    if (currentQrCode) {
-                        await readStudent(currentQrCode);
-                    }
-
+                    setTimeout(async () => {
+                        if (currentQrCode) {
+                            await readStudent(currentQrCode, currentMarkMethod);
+                        }
+                    }, 350);
                 } catch (error) {
                     console.error(error);
                     showAlert('danger', 'Something went wrong while saving class.');
                 } finally {
                     saveClassBtn.disabled = false;
-                    saveClassBtn.textContent = 'Save Class';
+                    saveClassBtn.innerHTML = 'Save Class';
                 }
             }
 
@@ -937,13 +1121,11 @@
                 studentDetailsCard.classList.add('d-none');
                 attendanceDetailsCard.classList.add('d-none');
 
-                attendanceTableBody.innerHTML = `
-                                    <tr>
-                                        <td colspan="10" class="text-center text-muted py-4">
-                                            No details found.
-                                        </td>
-                                    </tr>
-                                `;
+                if (attendanceDetailsContent) {
+                    attendanceDetailsContent.innerHTML = '';
+                }
+
+                hideErrorDetails();
             }
 
             function formatMoney(value) {
@@ -1010,7 +1192,6 @@
                     startScannerBtn.innerHTML = '<i class="bi bi-camera-video-fill me-1"></i>Scanner Running';
                     startScannerBtn.disabled = true;
                     stopScannerBtn.classList.remove('d-none');
-
                 } catch (error) {
                     console.error(error);
                     showAlert('danger', 'Could not start scanner.');
@@ -1048,7 +1229,7 @@
             startScannerBtn.addEventListener('click', startScanner);
             stopScannerBtn.addEventListener('click', stopScanner);
 
-            attendanceTableBody.addEventListener('click', function (event) {
+            attendanceDetailsContent.addEventListener('click', function (event) {
                 if (event.target.closest('#addClassBtn')) {
                     openAddClassModal();
                 }

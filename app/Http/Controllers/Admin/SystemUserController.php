@@ -10,7 +10,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use App\Exports\SystemUserExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 
 class SystemUserController extends Controller
@@ -225,5 +227,45 @@ class SystemUserController extends Controller
         }
 
         return 'SA-U-' . str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $filename = 'system_users_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        return Excel::download(new SystemUserExport($request), $filename);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = SystemUser::with('user')
+            ->whereHas('user', function ($q) {
+                $q->where('email', '!=', 'admin@nexorait.lk');
+            });
+
+        if ($request->search) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('custom_id', 'like', "%{$search}%")
+                    ->orWhere('full_name', 'like', "%{$search}%")
+                    ->orWhere('mobile', 'like', "%{$search}%")
+                    ->orWhere('nic', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('email', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->has('is_active') && $request->is_active !== '') {
+            $query->where('is_active', $request->is_active === 'true');
+        }
+
+        $systemUsers = $query->latest()->get();
+
+        $pdf = Pdf::loadView('admin.system-users.pdf', compact('systemUsers'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('system_users_' . date('Y-m-d_H-i-s') . '.pdf');
     }
 }

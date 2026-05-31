@@ -373,6 +373,10 @@ class DailyReportController extends Controller
     {
         $report = $this->resolveReport($type, $request->date, $service);
 
+        $report['headings'] = $this->pdfHeadings($type);
+        $report['columns'] = $this->pdfColumns($type);
+        $report['rows'] = $this->pdfRows($report['rows'], $report['columns']);
+
         $pdf = Pdf::loadView('admin.daily-report.pdf', $report);
 
         return $pdf->download(Str::slug($report['title']) . '-' . $report['date'] . '.pdf');
@@ -420,5 +424,74 @@ class DailyReportController extends Controller
             })->count(),
             'rows' => $rows,
         ];
+    }
+
+    protected function pdfColumns(string $type): array
+    {
+        return match ($type) {
+            'student' => [
+                'payment_id',
+                'paid_at',
+                'student_code',
+                'student_name',
+                'amount',
+                'payment_status',
+                'collected_by',
+            ],
+            'teacher' => [
+                'payment_date',
+                'teacher_name',
+                'student_name',
+                'teacher_amount',
+            ],
+            'institution' => [
+                'payment_id',
+                'payment_date',
+                'student_name',
+                'institution_amount',
+            ],
+            'organizer' => [
+                'payment_id',
+                'payment_date',
+                'organizer_name',
+                'student_name',
+                'organizer_amount',
+            ],
+            'admission' => [
+                'payment_id',
+                'created_at',
+                'student_name',
+                'amount',
+                'collected_by',
+            ],
+            'summary' => [
+                'category',
+                'sub_category',
+                'amount',
+            ],
+            default => [],
+        };
+    }
+
+    protected function pdfHeadings(string $type): array
+    {
+        return match ($type) {
+            'student' => ['Payment ID', 'Paid At', 'Qr Code', 'Student Name', 'Amount', 'Status', 'Collected By'],
+            'teacher' => ['Payment Date', 'Teacher Name', 'Student Name', 'Teacher Amount'],
+            'institution' => ['Payment ID', 'Payment Date', 'Student Name', 'Institution Amount'],
+            'organizer' => ['Payment ID', 'Payment Date', 'Organizer Name', 'Student Name', 'Organizer Amount'],
+            'admission' => ['Payment ID', 'Created At', 'Student Name', 'Amount', 'Collected By'],
+            'summary' => ['Category', 'Sub Category', 'Amount (Rs.)'],
+            default => [],
+        };
+    }
+
+    protected function pdfRows(array $rows, array $columns): array
+    {
+        return collect($rows)->map(function ($row) use ($columns) {
+            return collect($columns)->mapWithKeys(function ($column) use ($row) {
+                return [$column => data_get($row, $column)];
+            })->all();
+        })->values()->all();
     }
 }

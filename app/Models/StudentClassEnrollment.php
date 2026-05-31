@@ -47,7 +47,7 @@ class StudentClassEnrollment extends Model
     {
         return $this->belongsTo(ClassCategoryFee::class, 'class_category_fee_id');
     }
-
+    
     public function category()
     {
         return $this->hasOneThrough(

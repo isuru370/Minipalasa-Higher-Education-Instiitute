@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ClassPaymentConfig;
 use Illuminate\Support\Facades\DB;
+use App\Exports\OrganizerExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrganizerController extends Controller
 {
@@ -164,5 +167,38 @@ class OrganizerController extends Controller
         });
 
         return back()->with('success', 'Status updated.');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $filename = 'organizers_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        return Excel::download(new OrganizerExport($request), $filename);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = Organizer::query();
+
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")
+                    ->orWhere('mobile', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%")
+                    ->orWhere('nic', 'like', "%{$request->search}%")
+                    ->orWhere('code', 'like', "%{$request->search}%");
+            });
+        }
+
+        if ($request->is_active !== null && $request->is_active !== '') {
+            $query->where('is_active', $request->is_active === 'true');
+        }
+
+        $organizers = $query->latest()->get();
+
+        $pdf = Pdf::loadView('admin.organizers.pdf', compact('organizers'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('organizers_' . date('Y-m-d_H-i-s') . '.pdf');
     }
 }
