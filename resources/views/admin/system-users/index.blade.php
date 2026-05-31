@@ -95,12 +95,12 @@
                         Add User
                     </a>
 
-                    <a href="#" class="btn btn-success custom-btn">
+                    <a href="{{ route('admin.system-users.export.excel') }}" class="btn btn-success custom-btn">
                         <i class="bi bi-file-earmark-excel-fill"></i>
                         Excel
                     </a>
 
-                    <a href="#" class="btn btn-danger custom-btn">
+                    <a href="{{ route('admin.system-users.export.pdf') }}" class="btn btn-danger custom-btn">
                         <i class="bi bi-file-earmark-pdf-fill"></i>
                         PDF
                     </a>

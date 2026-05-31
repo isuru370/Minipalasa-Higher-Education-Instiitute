@@ -417,10 +417,10 @@
                     <div class="mb-3">
                         <span class="hero-badge">
                             <i class="bi bi-person-badge-fill"></i>
-                            Teacher Payment Report
+                            Teacher Daily Payment Report
                         </span>
                     </div>
-                    <h2 class="fw-bold mb-2">Teacher Collection Report</h2>
+                    <h2 class="fw-bold mb-2">Teacher Daily Collection Report</h2>
                     <p class="mb-0 text-light-soft">
                         View and analyze teacher-wise student payments collected.
                     </p>

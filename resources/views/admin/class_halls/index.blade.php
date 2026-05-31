@@ -1,23 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Class Halls')
-@section('page-title', 'Class Halls')
+@section('title', 'Weekly Timetable')
+@section('page-title', 'Weekly Timetable')
 
 @section('content')
 
-    <div class="halls-page">
+    <div class="weekly-timetable-page">
 
-        <!-- STATS -->
+        <!-- STATS CARDS -->
         <div class="row g-4 mb-4">
 
             <div class="col-xl-3 col-md-6">
                 <div class="stats-card">
                     <div class="stats-icon blue">
-                        <i class="bi bi-building"></i>
+                        <i class="bi bi-calendar-week"></i>
                     </div>
                     <div>
-                        <h3>{{ $halls->total() }}</h3>
-                        <p>Total Halls</p>
+                        <h3>{{ $schedules->count() }}</h3>
+                        <p>Total Classes</p>
                     </div>
                 </div>
             </div>
@@ -28,8 +28,8 @@
                         <i class="bi bi-check-circle-fill"></i>
                     </div>
                     <div>
-                        <h3>{{ \App\Models\ClassHall::where('is_active', 1)->count() }}</h3>
-                        <p>Active Halls</p>
+                        <h3>{{ $schedules->where('status', 'Completed')->count() }}</h3>
+                        <p>Completed</p>
                     </div>
                 </div>
             </div>
@@ -37,23 +37,23 @@
             <div class="col-xl-3 col-md-6">
                 <div class="stats-card">
                     <div class="stats-icon orange">
-                        <i class="bi bi-cash-coin"></i>
+                        <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div>
-                        <h3>{{ \App\Models\ClassHall::where('hall_price', 0)->count() }}</h3>
-                        <p>Free Halls</p>
+                        <h3>{{ $schedules->where('status', 'Pending')->count() }}</h3>
+                        <p>Pending</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-md-6">
                 <div class="stats-card">
-                    <div class="stats-icon red">
-                        <i class="bi bi-pause-circle-fill"></i>
+                    <div class="stats-icon purple">
+                        <i class="bi bi-play-circle-fill"></i>
                     </div>
                     <div>
-                        <h3>{{ \App\Models\ClassHall::where('is_active', 0)->count() }}</h3>
-                        <p>Inactive Halls</p>
+                        <h3>{{ $schedules->where('status', 'Ongoing')->count() }}</h3>
+                        <p>Ongoing</p>
                     </div>
                 </div>
             </div>
@@ -67,69 +67,105 @@
             <div class="main-card-header">
 
                 <div>
-                    <h4>Class Halls Management</h4>
-                    <p>Manage physical and online halls used for classes</p>
+                    <h4>Weekly Class Schedule</h4>
+                    <p>View and manage class timetable for the selected week</p>
                 </div>
 
                 <div class="header-buttons">
 
-                    <a href="{{ route('admin.class-halls.create') }}" class="btn btn-primary custom-btn">
-                        <i class="bi bi-plus-lg"></i>
-                        Add Hall
+                    @if(isset($startOfWeek, $endOfWeek))
+                        <div class="week-info">
+                            <i class="bi bi-calendar-range"></i>
+                            <span>{{ $startOfWeek->format('d M Y') }} - {{ $endOfWeek->format('d M Y') }}</span>
+                        </div>
+                    @endif
+
+                    <a href="{{ route('admin.weekly.pdf', ['week_date' => request('week_date', $selectedDate ?? now()->toDateString())]) }}"
+                        class="btn btn-danger custom-btn">
+                        <i class="bi bi-file-pdf"></i>
+                        PDF
                     </a>
 
-                    <a href="{{ route('admin.student-classes.index') }}" class="btn btn-outline-secondary custom-btn">
-                        <i class="bi bi-journal-bookmark-fill"></i>
-                        View Classes
+                    <a href="{{ route('admin.weekly.excel', ['week_date' => request('week_date', $selectedDate ?? now()->toDateString())]) }}"
+                        class="btn btn-success custom-btn">
+                        <i class="bi bi-file-excel"></i>
+                        Excel
                     </a>
-
-                    <!-- Future feature -->
-                    <button class="btn btn-light border custom-btn" disabled>
-                        <i class="bi bi-graph-up-arrow"></i>
-                        Analytics
-                    </button>
 
                 </div>
 
             </div>
 
-            <!-- SEARCH -->
+            <!-- SEARCH & FILTER -->
             <div class="search-card">
 
-                <form method="GET" action="{{ route('admin.class-halls.index') }}">
-                    <div class="row g-3">
+                <form method="GET" action="{{ route('admin.weekly-timetable') }}">
+                    <div class="row g-3 align-items-end">
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
+                            <label class="form-label fw-semibold mb-2">Select Week</label>
                             <div class="search-input-wrapper">
-                                <i class="bi bi-search"></i>
-                                <input type="text" name="search" class="form-control custom-input"
-                                    placeholder="Search hall name / code" value="{{ request('search') }}">
+                                <i class="bi bi-calendar-date"></i>
+                                <input type="date" name="week_date" class="form-control custom-input"
+                                    value="{{ old('week_date', $selectedDate ?? now()->toDateString()) }}">
                             </div>
                         </div>
 
-                        <div class="col-lg-3">
-                            <select name="is_active" class="form-select custom-input">
+                        <div class="col-lg-2">
+                            <label class="form-label fw-semibold mb-2">Status</label>
+                            <select name="status" class="form-select custom-input">
                                 <option value="">All Status</option>
-                                <option value="true" {{ request('is_active') === 'true' ? 'selected' : '' }}>Active</option>
-                                <option value="false" {{ request('is_active') === 'false' ? 'selected' : '' }}>Inactive
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending
+                                </option>
+                                <option value="ongoing" {{ request('status') == 'ongoing' ? 'selected' : '' }}>Ongoing
+                                </option>
+                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed
+                                </option>
+                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled
                                 </option>
                             </select>
                         </div>
 
-                        <div class="col-lg-1">
+                        <div class="col-lg-2">
+                            <label class="form-label fw-semibold mb-2">Grade</label>
+                            <select name="grade" class="form-select custom-input">
+                                <option value="">All Grades</option>
+                                @foreach($grades ?? [] as $grade)
+                                    <option value="{{ $grade->id }}" {{ request('grade') == $grade->id ? 'selected' : '' }}>
+                                        {{ $grade->grade_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-lg-2">
                             <button class="btn btn-primary w-100 custom-btn" type="submit">
-                                Search
+                                <i class="bi bi-search"></i> Search
                             </button>
                         </div>
 
                         <div class="col-lg-2">
-                            <a href="{{ route('admin.class-halls.index') }}" class="btn btn-light border w-100 custom-btn">
-                                Reset
+                            <a href="{{ route('admin.weekly-timetable') }}" class="btn btn-light border w-100 custom-btn">
+                                <i class="bi bi-arrow-repeat"></i> Reset
                             </a>
                         </div>
 
                     </div>
                 </form>
+
+                @if(session('error'))
+                    <div class="alert alert-danger mt-3 mb-0 rounded-3 d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                @error('week_date')
+                    <div class="alert alert-danger mt-3 mb-0 rounded-3 d-flex align-items-center">
+                        <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+                        {{ $message }}
+                    </div>
+                @enderror
 
             </div>
 
@@ -141,119 +177,155 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Hall</th>
-                            <th>Type</th>
-                            <th>Price</th>
+                            <th>Date & Time</th>
+                            <th>Class Details</th>
+                            <th>Grade</th>
+                            <th>Category</th>
+                            <th>Fee</th>
                             <th>Status</th>
-                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @forelse ($halls as $hall)
+                        @forelse ($schedules as $schedule)
+                            @php
+                                $classDate = $schedule->class_date ? Carbon\Carbon::parse($schedule->class_date) : null;
+                                $startTime = $schedule->start_time ? Carbon\Carbon::parse($schedule->start_time) : null;
+                                $endTime = $schedule->end_time ? Carbon\Carbon::parse($schedule->end_time) : null;
+
+                                $statusColors = [
+                                    'pending' => ['bg' => '#FEF3C7', 'color' => '#D97706', 'icon' => 'bi-hourglass-split'],
+                                    'ongoing' => ['bg' => '#E0E7FF', 'color' => '#4338CA', 'icon' => 'bi-play-circle-fill'],
+                                    'completed' => ['bg' => '#D1FAE5', 'color' => '#059669', 'icon' => 'bi-check-circle-fill'],
+                                    'cancelled' => ['bg' => '#FEE2E2', 'color' => '#DC2626', 'icon' => 'bi-x-circle-fill'],
+                                ];
+                                $status = strtolower($schedule->status ?? 'pending');
+                                $statusStyle = $statusColors[$status] ?? ['bg' => '#F3F4F6', 'color' => '#6B7280', 'icon' => 'bi-question-circle'];
+                            @endphp
+
                             <tr>
                                 <td>
-                                    {{ $loop->iteration + ($halls->currentPage() - 1) * $halls->perPage() }}
+                                    {{ $loop->iteration }}
                                 </td>
 
-                                <!-- HALL -->
+                                <!-- DATE & TIME -->
                                 <td>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="hall-avatar">
-                                            {{ strtoupper(substr($hall->hall_name, 0, 1)) }}
+                                    <div class="date-time-cell">
+                                        <div class="date">
+                                            <i class="bi bi-calendar3"></i>
+                                            <span>{{ $classDate ? $classDate->format('d M Y') : '-' }}</span>
                                         </div>
+                                        <div class="time">
+                                            <i class="bi bi-clock"></i>
+                                            <span>
+                                                {{ $startTime ? $startTime->format('h:i A') : '-' }} -
+                                                {{ $endTime ? $endTime->format('h:i A') : '-' }}
+                                            </span>
+                                        </div>
+                                        <div class="day">
+                                            {{ $classDate ? $classDate->format('l') : '' }}
+                                        </div>
+                                    </div>
+                                </td>
 
+                                <!-- CLASS DETAILS -->
+                                <td>
+                                    <div class="class-info">
+                                        <div class="class-avatar">
+                                            {{ strtoupper(substr($schedule->studentClass->class_name ?? 'C', 0, 1)) }}
+                                        </div>
                                         <div>
-                                            <div class="hall-name">
-                                                {{ $hall->hall_name }}
+                                            <div class="class-name">
+                                                {{ $schedule->studentClass->class_name ?? '-' }}
                                             </div>
-
                                             <small class="text-muted">
-                                                {{ $hall->code }}
+                                                <i class="bi bi-building"></i>
+                                                {{ $schedule->classHall->hall_name ?? 'No Hall Assigned' }}
                                             </small>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- TYPE -->
+                                <!-- GRADE -->
                                 <td>
-                                    <span class="fw-semibold">
-                                        {{ $hall->hall_type ?? '-' }}
+                                    @php
+                                        $gradeColors = [
+                                            '1' => 'grade-1',
+                                            '2' => 'grade-2',
+                                            '3' => 'grade-3',
+                                            '4' => 'grade-4',
+                                            '5' => 'grade-5',
+                                            '6' => 'grade-6'
+                                        ];
+                                        $gradeName = $schedule->studentClass->grade->grade_name ?? '-';
+                                        $gradeNum = preg_replace('/[^0-9]/', '', $gradeName);
+                                        $gradeClass = $gradeColors[$gradeNum] ?? 'grade-default';
+                                    @endphp
+                                    <span class="grade-badge {{ $gradeClass }}">
+                                        <i class="bi bi-star-fill"></i>
+                                        {{ $gradeName }}
                                     </span>
                                 </td>
 
-                                <!-- PRICE -->
+                                <!-- CATEGORY -->
                                 <td>
-                                    @if ((float) $hall->hall_price == 0)
-                                        <span class="badge bg-success custom-badge">Free</span>
+                                    <span class="category-badge">
+                                        <i class="bi bi-tag-fill"></i>
+                                        {{ $schedule->classCategoryFee->category->category_name ?? '-' }}
+                                    </span>
+                                </td>
+
+                                <!-- FEE -->
+                                <td>
+                                    @php
+                                        $fee = $schedule->classCategoryFee->fee ?? 0;
+                                    @endphp
+                                    @if($fee > 0)
+                                        <div class="fee-amount">
+                                            <span class="currency">$</span>
+                                            {{ number_format($fee, 2) }}
+                                        </div>
                                     @else
-                                        <span class="fw-bold">
-                                            {{ number_format($hall->hall_price, 2) }}
+                                        <span class="free-badge">
+                                            <i class="bi bi-gift-fill"></i> Free
                                         </span>
                                     @endif
                                 </td>
 
                                 <!-- STATUS -->
                                 <td>
-                                    @if($hall->is_active)
-                                        <span class="badge bg-success custom-badge">Active</span>
-                                    @else
-                                        <span class="badge bg-secondary custom-badge">Inactive</span>
-                                    @endif
+                                    <span class="status-badge"
+                                        style="background-color: {{ $statusStyle['bg'] }}; color: {{ $statusStyle['color'] }};">
+                                        <i class="bi {{ $statusStyle['icon'] }} me-1"></i>
+                                        {{ ucfirst($schedule->status ?? '-') }}
+                                    </span>
                                 </td>
 
-                                <!-- ACTIONS -->
-                                <td class="text-end">
-                                    <div class="action-buttons">
-
-                                        <a href="{{ route('admin.class-halls.show', $hall) }}" class="action-btn view-btn">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-
-                                        <a href="{{ route('admin.class-halls.edit', $hall) }}" class="action-btn edit-btn">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-
-                                        <form method="POST" action="{{ route('admin.class-halls.toggleActive', $hall) }}"
-                                            onsubmit="return confirm('Change active status?')">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="action-btn toggle-btn">
-                                                <i class="bi bi-arrow-repeat"></i>
-                                            </button>
-                                        </form>
-
-                                        <form method="POST" action="{{ route('admin.class-halls.destroy', $hall) }}"
-                                            onsubmit="return confirm('Delete this hall?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="action-btn delete-btn">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </button>
-                                        </form>
-
-                                    </div>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">
+                                <td colspan="7" class="text-center py-5">
                                     <div class="empty-state">
-                                        <i class="bi bi-building-x"></i>
-                                        <h5>No Class Halls Found</h5>
-                                        <p>Try adjusting the search filters</p>
+                                        <i class="bi bi-calendar-x"></i>
+                                        <h5>No Classes Found</h5>
+                                        <p>No timetable records found for this week</p>
+                                        <small class="text-muted">Try selecting a different week or reset filters</small>
                                     </div>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
+
                 </table>
 
             </div>
 
-            <div class="mt-4">
-                {{ $halls->links() }}
-            </div>
+            <!-- PAGINATION -->
+            @if(method_exists($schedules, 'hasPages') && $schedules->hasPages())
+                <div class="mt-4">
+                    {{ $schedules->links() }}
+                </div>
+            @endif
 
         </div>
     </div>
@@ -262,10 +334,23 @@
 
 @push('styles')
     <style>
-        .halls-page {
+        .weekly-timetable-page {
             animation: fadeIn 0.4s ease;
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stats Cards */
         .stats-card {
             background: #fff;
             border-radius: 24px;
@@ -275,6 +360,12 @@
             align-items: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
             border: 1px solid #eef2f7;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, .08);
         }
 
         .stats-icon {
@@ -285,40 +376,43 @@
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
 
-        .blue {
+        .stats-icon.blue {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
         }
 
-        .green {
+        .stats-icon.green {
             background: linear-gradient(135deg, #10b981, #34d399);
         }
 
-        .orange {
+        .stats-icon.orange {
             background: linear-gradient(135deg, #f59e0b, #fbbf24);
         }
 
-        .red {
-            background: linear-gradient(135deg, #ef4444, #f87171);
+        .stats-icon.purple {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
         }
 
         .stats-card h3 {
             margin: 0;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 700;
+            color: #1e293b;
         }
 
         .stats-card p {
             margin: 0;
             color: #64748b;
+            font-weight: 500;
         }
 
+        /* Main Card */
         .main-card {
             background: #fff;
             border-radius: 28px;
-            padding: 1.5rem;
+            padding: 1.8rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, .05);
         }
 
@@ -326,7 +420,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
             flex-wrap: wrap;
             gap: 1rem;
         }
@@ -334,36 +428,58 @@
         .main-card-header h4 {
             margin: 0;
             font-weight: 700;
+            color: #1e293b;
         }
 
         .main-card-header p {
             margin: 0;
             color: #64748b;
+            margin-top: 4px;
+        }
+
+        .week-info {
+            background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+            padding: 0.6rem 1.2rem;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .week-info i {
+            font-size: 1.2rem;
         }
 
         .header-buttons {
             display: flex;
-            gap: .7rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .custom-btn {
             border-radius: 14px;
-            padding: .7rem 1.2rem;
+            padding: 0.7rem 1.2rem;
             font-weight: 600;
-            border: none;
-            transition: .2s ease;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .custom-btn:hover {
             transform: translateY(-2px);
+            filter: brightness(1.05);
         }
 
+        /* Search Card */
         .search-card {
             background: #f8fafc;
             border-radius: 20px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.8rem;
         }
 
         .search-input-wrapper {
@@ -376,6 +492,7 @@
             left: 15px;
             transform: translateY(-50%);
             color: #64748b;
+            font-size: 1rem;
         }
 
         .custom-input {
@@ -383,6 +500,7 @@
             border: 1px solid #e2e8f0;
             min-height: 48px;
             padding-left: 42px;
+            transition: all 0.2s ease;
         }
 
         .custom-input:focus {
@@ -390,33 +508,84 @@
             box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
         }
 
+        select.custom-input {
+            padding-left: 42px;
+            cursor: pointer;
+        }
+
+        /* Table Styles */
         .custom-table thead th {
             border: none;
             background: #f8fafc;
             color: #475569;
-            font-size: .82rem;
+            font-size: 0.82rem;
             text-transform: uppercase;
             padding: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .custom-table tbody tr {
-            transition: .2s ease;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .custom-table tbody tr:hover {
             background: #f8fafc;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         }
 
         .custom-table tbody td {
-            padding: 1rem;
-            border-color: #f1f5f9;
+            padding: 1.2rem 1rem;
+            border: none;
             vertical-align: middle;
         }
 
-        .hall-avatar {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
+        /* Date & Time Cell */
+        .date-time-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .date,
+        .time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .date i,
+        .time i {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .date span,
+        .time span {
+            color: #334155;
+        }
+
+        .day {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.2rem;
+            font-weight: 500;
+        }
+
+        /* Class Info */
+        .class-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .class-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             display: flex;
@@ -427,70 +596,168 @@
             box-shadow: 0 8px 18px rgba(79, 70, 229, .20);
         }
 
-        .hall-name {
+        .class-name {
             font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.2rem;
         }
 
-        .custom-badge {
-            border-radius: 10px;
-            padding: .5rem .7rem;
-            font-size: .75rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: .5rem;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            width: 38px;
-            height: 38px;
+        /* Grade Badges */
+        .grade-badge {
+            padding: 0.5rem 0.9rem;
             border-radius: 12px;
-            border: none;
-            display: flex;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: .2s ease;
+            gap: 0.4rem;
         }
 
-        .action-btn:hover {
-            transform: translateY(-2px);
+        .grade-badge i {
+            font-size: 0.7rem;
         }
 
-        .view-btn {
-            background: #eff6ff;
-            color: #2563eb;
+        .grade-1 {
+            background: #dbeafe;
+            color: #1e40af;
         }
 
-        .edit-btn {
+        .grade-2 {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .grade-3 {
+            background: #cffafe;
+            color: #0e7490;
+        }
+
+        .grade-4 {
             background: #fef3c7;
-            color: #d97706;
+            color: #b45309;
         }
 
-        .toggle-btn {
-            background: #ecfdf5;
-            color: #10b981;
+        .grade-5 {
+            background: #e0f2fe;
+            color: #0369a1;
         }
 
-        .delete-btn {
-            background: #fef2f2;
-            color: #ef4444;
+        .grade-6 {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        .grade-default {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        /* Category Badge */
+        .category-badge {
+            background: #f3e8ff;
+            color: #6b21a5;
+            padding: 0.5rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Fee */
+        .fee-amount {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1e293b;
+        }
+
+        .fee-amount .currency {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .free-badge {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.4rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
         }
 
         .empty-state i {
-            font-size: 3rem;
+            font-size: 4rem;
             color: #cbd5e1;
             margin-bottom: 1rem;
         }
 
         .empty-state h5 {
             font-weight: 700;
+            color: #64748b;
+            margin-bottom: 0.5rem;
         }
 
-        @media(max-width:768px) {
+        .empty-state p {
+            color: #94a3b8;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .pagination .page-link {
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            padding: 0.5rem 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .pagination .page-link:hover {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1e40af;
+            transform: translateY(-2px);
+        }
+
+        .pagination .active .page-link {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
             .main-card-header {
                 flex-direction: column;
                 align-items: stretch;
@@ -498,11 +765,25 @@
 
             .header-buttons {
                 width: 100%;
+                justify-content: space-between;
             }
 
-            .header-buttons a,
-            .header-buttons button {
-                flex: 1;
+            .custom-table {
+                font-size: 0.85rem;
+            }
+
+            .stats-card {
+                padding: 1rem;
+            }
+
+            .stats-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+
+            .stats-card h3 {
+                font-size: 1.3rem;
             }
         }
     </style>

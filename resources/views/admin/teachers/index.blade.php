@@ -427,11 +427,12 @@
 
                                         <!-- FUTURE FEATURE -->
 
-                                        <button class="action-btn salary-btn" disabled>
+                                        <a href="{{ url('admin/teacher-salaries/' . $teacher->id . '/' . now()->year . '/' . now()->month) }}"
+                                            class="action-btn salary-btn" title="Teacher Salary Report">
 
                                             <i class="bi bi-cash-stack"></i>
 
-                                        </button>
+                                        </a>
 
                                         <!-- DELETE -->
 

@@ -112,7 +112,7 @@
                 <li>
 
                     <a class="dropdown-item"
-                        href="#">
+                        href="{{ route('admin.setting.index') }}">
 
                         <i class="bi bi-gear me-2"></i>
 

@@ -12,7 +12,6 @@ use App\Models\StudentClassEnrollment;
 use App\Models\StudentTute;
 use App\Services\StudentQRService;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

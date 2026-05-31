@@ -228,82 +228,90 @@
 
                             <tbody>
                                 @forelse($schedules as $schedule)
-                                    <tr>
-                                        <td>
-                                            <div class="fw-semibold">
-                                                {{ \Carbon\Carbon::parse($schedule->start_time)->format('h:i A') }}
-                                                -
-                                                {{ \Carbon\Carbon::parse($schedule->end_time)->format('h:i A') }}
-                                            </div>
-                                        </td>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="fw-semibold">
+                                                                {{ \Carbon\Carbon::parse($schedule->start_time)->format('h:i A') }}
+                                                                -
+                                                                {{ \Carbon\Carbon::parse($schedule->end_time)->format('h:i A') }}
+                                                            </div>
+                                                        </td>
 
-                                        <td>
-                                            <div class="fw-bold">
-                                                {{ $class->class_name }}
-                                            </div>
-                                            <small class="text-muted">
-                                                {{ optional($class->grade)->grade_name ?? '-' }}
-                                                /
-                                                {{ optional($class->subject)->subject_name ?? '-' }}
-                                            </small>
-                                        </td>
+                                                        <td>
+                                                            <div class="fw-bold">
+                                                                {{ $class->class_name }}
+                                                            </div>
+                                                            <small class="text-muted">
+                                                                {{ optional($class->grade)->grade_name ?? '-' }}
+                                                                /
+                                                                {{ optional($class->subject)->subject_name ?? '-' }}
+                                                            </small>
+                                                        </td>
 
-                                        <td>
-                                            @forelse($categoryFees as $fee)
-                                                <span class="fee-pill">
-                                                    {{ optional($fee->category)->category_name ?? '-' }}
-                                                    · Rs. {{ number_format($fee->fee, 2) }}
-                                                    · Fee ID: {{ $fee->id }}
-                                                </span>
-                                                <br>
-                                            @empty
-                                                <span class="text-muted">No Category Fees</span>
-                                            @endforelse
-                                        </td>
+                                                        <td>
+                                                            @forelse($categoryFees as $fee)
+                                                                <span class="fee-pill">
+                                                                    {{ optional($fee->category)->category_name ?? '-' }}
+                                                                    · Rs. {{ number_format($fee->fee, 2) }}
+                                                                    · Fee ID: {{ $fee->id }}
+                                                                </span>
+                                                                <br>
+                                                            @empty
+                                                                <span class="text-muted">No Category Fees</span>
+                                                            @endforelse
+                                                        </td>
 
-                                        <td>
-                                            <div class="fw-semibold">
-                                                {{ optional($class->teacher)->initials ?? '-' }}
-                                            </div>
-                                        </td>
+                                                        <td>
+                                                            <div class="fw-semibold">
+                                                                {{ optional($class->teacher)->initials ?? '-' }}
+                                                            </div>
+                                                        </td>
 
-                                        <td>
-                                            <span class="fw-semibold">
-                                                {{ optional($schedule->hall)->hall_name ?? '-' }}
-                                            </span>
-                                        </td>
+                                                        <td>
+                                                            <span class="fw-semibold">
+                                                                {{ optional($schedule->hall)->hall_name ?? '-' }}
+                                                            </span>
+                                                        </td>
 
-                                        <td>
-                                            <div class="action-buttons">
+                                                        <td>
+                                                            <div class="action-buttons">
 
-                                                @if($firstFee)
-                                                                            <a href="{{ route('admin.attendance.index', [
-                                                        'class_schedule_id' => $schedule->id,
-                                                        'student_class_id' => $class->id,
-                                                        'class_category_fee_id' => $firstFee->id,
-                                                    ]) }}" class="action-btn view-btn" title="Mark Attendance">
-                                                                                <i class="bi bi-check2-square"></i>
-                                                                            </a>
-                                                @else
-                                                    <button type="button" class="action-btn disabled-btn" disabled
-                                                        title="No Category Fee">
-                                                        <i class="bi bi-check2-square"></i>
-                                                    </button>
-                                                @endif
+                                                                @if($firstFee)
+                                                                                            <a href="{{ route('admin.attendance.index', [
+                                                                        'class_schedule_id' => $schedule->id,
+                                                                        'student_class_id' => $class->id,
+                                                                        'class_category_fee_id' => $firstFee->id,
+                                                                    ]) }}" class="action-btn view-btn" title="Mark Attendance">
+                                                                                                <i class="bi bi-check2-square"></i>
+                                                                                            </a>
+                                                                @else
+                                                                    <button type="button" class="action-btn disabled-btn" disabled
+                                                                        title="No Category Fee">
+                                                                        <i class="bi bi-check2-square"></i>
+                                                                    </button>
+                                                                @endif
 
-                                                <form action="{{ route('admin.class-schedules.statusUpdate', $schedule) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('PATCH')
+                                                                <form action="{{ route('admin.class-schedules.statusUpdate', $schedule) }}"
+                                                                    method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('PATCH')
 
-                                                    <button type="submit" class="action-btn complete-btn" title="Complete">
-                                                        <i class="bi bi-check-circle-fill"></i>
-                                                    </button>
-                                                </form>
+                                                                    <button type="submit" class="action-btn complete-btn" title="Complete">
+                                                                        <i class="bi bi-check-circle-fill"></i>
+                                                                    </button>
+                                                                </form>
 
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                                <a href="{{ route('admin.today-attendance.index', [
+                                        'class_schedule_id' => $schedule->id,
+                                        'student_class_id' => $class->id,
+                                        'class_category_fee_id' => $firstFee?->id,
+                                    ]) }}" class="action-btn today-attendance-btn" title="View Attendance">
+                                                                    <i class="bi bi-eye"></i>
+                                                                </a>
+
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                 @empty
                                     <tr>
                                         <td colspan="6" class="text-center text-muted py-5">
