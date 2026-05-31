@@ -523,7 +523,7 @@
 
                                 <td>
                                     <img src="{{ asset('storage/' . $photo->image_path) }}" alt="Student Image"
-                                        class="student-img" onerror="this.src='{{ asset('images/default-avatar.png') }}'">
+                                        class="student-img" onerror="this.src='{{ asset('storage/uploads/male.png') }}'">
                                 </td>
 
                                 <td>

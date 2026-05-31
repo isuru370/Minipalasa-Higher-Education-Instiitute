@@ -528,6 +528,112 @@
             </div>
         </div>
 
+        {{-- ========================================= --}}
+        {{-- TEACHER EXPENSE REPORT SECTION --}}
+        {{-- ========================================= --}}
+        <div class="report-card">
+            <div class="report-header">
+                <div class="report-title">
+                    <i class="bi bi-wallet2"></i>
+                    Teacher Expense Report
+                </div>
+                <div class="report-subtitle">
+                    Filter teacher, year and month to download expense reports
+                </div>
+            </div>
+
+            <div class="report-body">
+                <form method="GET" action="{{ route('admin.monthly-report.index') }}">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label-custom">Year</label>
+                            <select name="year" class="form-select-custom">
+                                @for ($y = now()->year; $y >= 2020; $y--)
+                                    <option value="{{ $y }}" {{ request('year', now()->year) == $y ? 'selected' : '' }}>
+                                        {{ $y }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label-custom">Month</label>
+                            <select name="month" class="form-select-custom">
+                                @for ($m = 1; $m <= 12; $m++)
+                                    <option value="{{ $m }}" {{ request('month', now()->month) == $m ? 'selected' : '' }}>
+                                        {{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label-custom">Select Teacher</label>
+                            <select name="teacher_id" class="form-select-custom">
+                                <option value="">-- Select Teacher --</option>
+                                @foreach ($teachers as $teacherItem)
+                                    <option value="{{ $teacherItem->id }}" {{ request('teacher_id') == $teacherItem->id ? 'selected' : '' }}>
+                                        {{ $teacherItem->custom_id }} - {{ $teacherItem->initials }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button type="submit" class="btn-primary-custom w-100">
+                                <i class="bi bi-search me-1"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="divider"></div>
+
+                @php
+                    $teacherId = request('teacher_id');
+                    $year = request('year', now()->year);
+                    $month = request('month', now()->month);
+                @endphp
+
+                @if($teacherId)
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ route('admin.teacher-expense-report.excel', [
+                        'teacher_id' => $teacherId,
+                        'year' => $year,
+                        'month' => $month,
+                    ]) }}" class="btn-excel">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                                    Download Excel
+                                </a>
+
+                                <a href="{{ route('admin.teacher-expense-report.pdf', [
+                        'teacher_id' => $teacherId,
+                        'year' => $year,
+                        'month' => $month,
+                    ]) }}" target="_blank" class="btn-pdf">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                    Download PDF
+                                </a>
+                            </div>
+                @else
+                    <div class="info-box" style="background: #fef3c7;">
+                        <i class="bi bi-exclamation-triangle-fill" style="color: #f59e0b;"></i>
+                        <div class="info-box-text">
+                            Please select a teacher to generate the expense report.
+                        </div>
+                    </div>
+                @endif
+
+                <div class="info-box mt-3">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <div class="info-box-text">
+                        This report shows all teacher expenses for the selected
+                        month and year.
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{-- FOOTER NOTE --}}
         <div class="text-center mt-3">
             <small class="text-muted">
