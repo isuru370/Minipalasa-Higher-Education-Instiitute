@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.1-apache
 
 # ----------------------------
 # Enable required Apache modules
@@ -39,7 +39,7 @@ COPY . .
 # ----------------------------
 # Install Laravel dependencies
 # ----------------------------
-RUN composer install -vvv --no-interaction --prefer-dist --no-dev --no-scripts
+RUN bash -lc 'composer install -vvv --no-interaction --prefer-dist --no-dev --no-scripts 2>&1 | tee /tmp/composer.log'
 
 # ----------------------------
 # Set Apache document root to /public
