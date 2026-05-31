@@ -39,15 +39,16 @@ COPY . .
 # ----------------------------
 # Install Laravel dependencies
 # ----------------------------
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --no-scripts
 
 # ----------------------------
 # Set Apache document root to /public
 # ----------------------------
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+RUN sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" \
     /etc/apache2/sites-available/*.conf \
     /etc/apache2/apache2.conf
+    
 
 # ----------------------------
 # Fix Laravel permissions
