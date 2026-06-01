@@ -349,6 +349,38 @@
             @endif
         </div>
 
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">RECENT ACTIVITIES</div>
+
+            @if(hasPermission('activity-logs.index'))
+                <div class="nav-item">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}"
+                        data-route="admin.activity-logs.index" data-href="{{ route('admin.activity-logs.index') }}">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>Activities</span>
+                    </button>
+                </div>
+            @endif
+            @if(
+                    hasPermission('logs.laravel.index') &&
+                    auth()->check() &&
+                    auth()->user()->email === 'admin@nexorait.lk'
+                )
+                <div class="nav-item">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.logs.laravel.*') ? 'active' : '' }}"
+                        data-route="admin.logs.laravel.index" data-href="{{ route('admin.logs.laravel.index') }}">
+
+                        <i class="bi bi-file-earmark-text"></i>
+
+                        <span>Laravel Logs</span>
+
+                    </button>
+                </div>
+            @endif
+        </div>
+
     </div>
 
 </aside>

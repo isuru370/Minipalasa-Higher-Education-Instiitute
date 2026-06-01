@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdmissionController;
 use App\Http\Controllers\Admin\AdmissionPaymentController;
 use App\Http\Controllers\Admin\OrganizerPaymentController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Admin\InstituteExpenseController;
 use App\Http\Controllers\Admin\InstituteIncomeController;
 use App\Http\Controllers\Admin\InstitutePaymentReportController;
 use App\Http\Controllers\Admin\InstituteReportController;
+use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MonthlyReportController;
 use App\Http\Controllers\Admin\StudentIDCardController;
 use App\Http\Controllers\Admin\StudentImageController;
@@ -33,6 +35,7 @@ use App\Http\Controllers\Admin\TeacherSalaryController;
 use App\Http\Controllers\Admin\TemporaryIDCardController;
 use App\Http\Controllers\Admin\TodayAttendanceController;
 use App\Http\Controllers\Admin\UserPermissionController;
+use App\Http\Controllers\Admin\UserProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -153,6 +156,15 @@ Route::middleware([
 
     ->group(function () {
 
+
+        Route::get('/profile', [UserProfileController::class, 'index'])
+            ->name('profile.index');
+
+        Route::post('/profile', [UserProfileController::class, 'update'])
+            ->name('profile.update');
+
+        Route::post('/profile/password', [UserProfileController::class, 'changePassword'])
+            ->name('profile.password');
         /*
         |--------------------------------------------------------------------------
         | Dashboard
@@ -721,17 +733,27 @@ Route::middleware([
         Route::prefix('student-id-cards')
             ->name('student-id-cards.')
             ->group(function () {
+                
+                // View routes
                 Route::get('/', [StudentIDCardController::class, 'index'])
                     ->name('index');
-
+                
                 Route::get('{studentIdCard}/print', [StudentIDCardController::class, 'print'])
                     ->name('print');
-
+                
+                // Download routes (NO Browsershot - Client side)
                 Route::get('{studentIdCard}/download', [StudentIDCardController::class, 'downloadSingle'])
                     ->name('download-single');
-
+                
                 Route::post('download-bulk', [StudentIDCardController::class, 'downloadBulk'])
                     ->name('download-bulk');
+                
+                // Status update routes (using Fetch API)
+                Route::patch('{studentIdCard}/status', [StudentIDCardController::class, 'updateStatus'])
+                    ->name('update-status');
+                
+                Route::patch('bulk-status', [StudentIDCardController::class, 'bulkUpdateStatus'])
+                    ->name('bulk-update-status');
             });
 
         Route::get('/today-attendance', [TodayAttendanceController::class, 'index'])
@@ -798,4 +820,42 @@ Route::middleware([
 
         Route::post('setting/backup/import', [DatabaseBackupController::class, 'import'])
             ->name('setting.backup.import');
+
+        /*
+|--------------------------------------------------------------------------
+|  Activity Logs
+|--------------------------------------------------------------------------
+*/
+
+        Route::get('/activity-logs', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('/activity-logs/export', [App\Http\Controllers\Admin\ActivityLogController::class, 'export'])->name('activity-logs.export');
+        Route::post('/activity-logs/clear', [App\Http\Controllers\Admin\ActivityLogController::class, 'clearOld'])->name('activity-logs.clear');
+
+
+        /*
+|--------------------------------------------------------------------------
+|  Laravel Logs
+|--------------------------------------------------------------------------
+*/
+
+        Route::get(
+            '/logs/laravel',
+            [LogController::class, 'index']
+        )->name('logs.laravel.index');
+
+        Route::post(
+            '/logs/laravel/clear',
+            [LogController::class, 'clear']
+        )->name('logs.laravel.clear');
+
+        Route::get(
+            '/logs/laravel/download',
+            [LogController::class, 'download']
+        )->name('logs.laravel.download');
+
+        Route::get(
+            '/logs/laravel/stats',
+            [LogController::class, 'stats']
+        )
+            ->name('logs.laravel.stats');
     });
