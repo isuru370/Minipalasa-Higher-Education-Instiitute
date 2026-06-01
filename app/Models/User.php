@@ -37,6 +37,13 @@ class User extends Authenticatable
         }
     }
 
+    public function systemUser()
+    {
+        return $this->hasOne(SystemUser::class);
+    }
+
+    
+
     public function userType()
     {
         return $this->belongsTo(UserType::class);
@@ -46,5 +53,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payment::class);
     }
-    
 }

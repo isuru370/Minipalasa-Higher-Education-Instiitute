@@ -4,8 +4,7 @@
     <div class="d-flex align-items-center gap-3">
 
         <!-- MOBILE TOGGLE -->
-        <button class="mobile-toggle"
-            id="mobileToggle">
+        <button class="mobile-toggle" id="mobileToggle">
 
             <i class="bi bi-list"></i>
 
@@ -39,7 +38,7 @@
                 <i class="bi bi-bell"></i>
 
                 <span class="notification-badge">
-                    3
+                    0
                 </span>
 
             </button>
@@ -49,9 +48,7 @@
         <!-- USER DROPDOWN -->
         <div class="dropdown">
 
-            <div class="user-dropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false">
+            <div class="user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
 
                 <!-- USER INFO -->
                 <div class="user-info d-none d-sm-block">
@@ -97,8 +94,7 @@
                 <!-- PROFILE -->
                 <li>
 
-                    <a class="dropdown-item"
-                        href="#">
+                    <a class="dropdown-item" href="{{ route('admin.profile.index') }}">
 
                         <i class="bi bi-person-circle me-2"></i>
 
@@ -111,8 +107,7 @@
                 <!-- SETTINGS -->
                 <li>
 
-                    <a class="dropdown-item"
-                        href="{{ route('admin.setting.index') }}">
+                    <a class="dropdown-item" href="{{ route('admin.setting.index') }}">
 
                         <i class="bi bi-gear me-2"></i>
 
@@ -125,8 +120,7 @@
                 <!-- HELP -->
                 <li>
 
-                    <a class="dropdown-item"
-                        href="#">
+                    <a class="dropdown-item" href="#">
 
                         <i class="bi bi-question-circle me-2"></i>
 
@@ -143,13 +137,11 @@
                 <!-- LOGOUT -->
                 <li>
 
-                    <form method="POST"
-                        action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('logout') }}">
 
                         @csrf
 
-                        <button type="submit"
-                            class="dropdown-item text-danger">
+                        <button type="submit" class="dropdown-item text-danger">
 
                             <i class="bi bi-box-arrow-right me-2"></i>
 
@@ -170,13 +162,12 @@
 </nav>
 
 <style>
-
     /* TOP NAVBAR */
 
     .top-navbar {
 
         background:
-            rgba(255,255,255,0.80);
+            rgba(255, 255, 255, 0.80);
 
         backdrop-filter: blur(14px);
 
@@ -196,7 +187,7 @@
         justify-content: space-between;
 
         box-shadow:
-            0 4px 20px rgba(0,0,0,0.04);
+            0 4px 20px rgba(0, 0, 0, 0.04);
     }
 
     /* PAGE TITLE */
@@ -255,7 +246,7 @@
         transition: 0.25s ease;
 
         box-shadow:
-            0 4px 12px rgba(0,0,0,0.05);
+            0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     .notification-button:hover {
@@ -325,11 +316,9 @@
         border-radius: 50%;
 
         background:
-            linear-gradient(
-                135deg,
+            linear-gradient(135deg,
                 #2563eb,
-                #60a5fa
-            );
+                #60a5fa);
 
         display: flex;
         align-items: center;
@@ -340,7 +329,7 @@
         font-weight: 700;
 
         box-shadow:
-            0 8px 18px rgba(37,99,235,0.25);
+            0 8px 18px rgba(37, 99, 235, 0.25);
     }
 
     /* USER INFO */
@@ -377,7 +366,7 @@
         margin-top: 12px;
 
         box-shadow:
-            0 12px 30px rgba(0,0,0,0.08);
+            0 12px 30px rgba(0, 0, 0, 0.08);
     }
 
     .dropdown-header {
@@ -437,5 +426,4 @@
             display: none;
         }
     }
-
 </style>
