@@ -11,16 +11,15 @@ class CreateQuickPhotosTable extends Migration
         Schema::create('quick_photos', function (Blueprint $table) {
             $table->id();
 
-            $table->string('custom_id', 50)->index(); // link to student / temp id
+            $table->string('custom_id', 50)->nullable()->unique();
 
-            $table->string('image_path', 255); // renamed (better than quick_img)
+            $table->string('image_path', 255);
 
             $table->boolean('is_active')->default(true);
 
             $table->timestamps();
             $table->softDeletes();
 
-            // indexes
             $table->index(['custom_id', 'is_active']);
         });
     }

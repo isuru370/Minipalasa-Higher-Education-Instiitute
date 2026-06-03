@@ -193,6 +193,7 @@ class StudentAttendanceController extends Controller
         return StudentTute::create([
             'student_id' => $student->id,
             'student_class_enrollment_id' => $enrollment->id,
+            'issued_month' => now()->startOfMonth()->toDateString(),
             'is_issued' => true,
             'issued_at' => now(),
             'issued_by' => Auth::id(),

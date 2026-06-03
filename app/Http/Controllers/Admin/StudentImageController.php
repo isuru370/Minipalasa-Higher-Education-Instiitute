@@ -85,14 +85,6 @@ class StudentImageController extends Controller
                 ]);
         }
 
-        if (!empty($student->img_url) && $student->img_url !== $quickPhoto->image_path) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'qr_code' => 'This student already has another image assigned. Reassignment is not allowed.',
-                ]);
-        }
-
         $anotherStudentUsingSameImage = Student::where('img_url', $quickPhoto->image_path)
             ->where('id', '!=', $student->id)
             ->first();

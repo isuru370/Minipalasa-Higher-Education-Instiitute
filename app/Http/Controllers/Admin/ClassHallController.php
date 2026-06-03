@@ -17,7 +17,7 @@ class ClassHallController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('hall_name', 'like', "%{$request->search}%")
-                  ->orWhere('code', 'like', "%{$request->search}%");
+                    ->orWhere('code', 'like', "%{$request->search}%");
             });
         }
 

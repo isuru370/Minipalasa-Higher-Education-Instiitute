@@ -5,144 +5,54 @@
 
 @section('content')
     @php
-        $classCollection = collect($classes);
-
+        // Mobile API එකෙන් එන structure එකටම අනුව data access කරනවා
         $todayDate = \Carbon\Carbon::parse($today);
         $dayName = $todayDate->format('l');
-
-        $totalClasses = $classCollection->count();
-
-        $totalSchedules = $classCollection->sum(function ($class) {
-            return $class->schedules ? $class->schedules->count() : 0;
-        });
-
-        $classesWithFee = $classCollection->filter(function ($class) {
-            return $class->categoryFees && $class->categoryFees->count() > 0;
-        })->count();
-
-        $classesWithoutFee = $classCollection->filter(function ($class) {
-            return !($class->categoryFees && $class->categoryFees->count() > 0);
-        })->count();
-
         $searchValue = request('search', '');
     @endphp
 
     <div class="today-classes-page">
-
-        <!-- HERO -->
+        <!-- Hero Section -->
         <div class="hero-card mb-4">
             <div class="hero-content">
-
                 <div>
                     <h3 class="fw-bold mb-1">Today's Classes</h3>
                     <p class="text-muted mb-0">
                         {{ $todayDate->format('Y-m-d') }} | {{ ucfirst($dayName) }}
                     </p>
                 </div>
-
                 <div class="hero-actions">
                     <button type="button" class="btn btn-light border custom-btn" disabled>
-                        <i class="bi bi-printer"></i>
-                        Print
+                        <i class="bi bi-printer"></i> Print
                     </button>
-
                     <button type="button" class="btn btn-light border custom-btn" disabled>
-                        <i class="bi bi-file-earmark-excel-fill"></i>
-                        Export
+                        <i class="bi bi-file-earmark-excel-fill"></i> Export
                     </button>
                 </div>
-
             </div>
         </div>
 
-        <!-- STATS -->
+        <!-- Stats Section -->
         <div class="row g-4 mb-4">
-
             <div class="col-xl-3 col-md-6">
                 <div class="stats-card">
                     <div class="stats-icon blue">
                         <i class="bi bi-calendar2-week-fill"></i>
                     </div>
                     <div>
-                        <h3>{{ $totalClasses }}</h3>
+                        <h3>{{ count($classes) }}</h3>
                         <p>Classes Today</p>
                     </div>
                 </div>
             </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="stats-card">
-                    <div class="stats-icon green">
-                        <i class="bi bi-clock-fill"></i>
-                    </div>
-                    <div>
-                        <h3>{{ $totalSchedules }}</h3>
-                        <p>Total Schedules</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="stats-card">
-                    <div class="stats-icon orange">
-                        <i class="bi bi-cash-coin"></i>
-                    </div>
-                    <div>
-                        <h3>{{ $classesWithFee }}</h3>
-                        <p>Fee Ready</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="stats-card">
-                    <div class="stats-icon red">
-                        <i class="bi bi-exclamation-circle-fill"></i>
-                    </div>
-                    <div>
-                        <h3>{{ $classesWithoutFee }}</h3>
-                        <p>No Fee Config</p>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-        <!-- MAIN CARD -->
+        <!-- Main Card -->
         <div class="main-card">
-
-            <!-- HEADER -->
-            <div class="main-card-header">
-
-                <div>
-                    <h4>Today's Classes</h4>
-                    <p>
-                        {{ $todayDate->format('Y-m-d') }} | {{ ucfirst($dayName) }}
-                    </p>
-                </div>
-
-                <div class="header-buttons">
-
-                    <button type="button" class="btn btn-light border custom-btn" disabled>
-                        <i class="bi bi-printer"></i>
-                        Print
-                    </button>
-
-                    <button type="button" class="btn btn-light border custom-btn" disabled>
-                        <i class="bi bi-file-earmark-excel-fill"></i>
-                        Export
-                    </button>
-
-                </div>
-
-            </div>
-
-            <!-- SEARCH -->
+            <!-- Search Section -->
             <div class="search-card">
-
                 <form method="GET" action="{{ url()->current() }}">
                     <div class="row g-3">
-
                         <div class="col-lg-10">
                             <div class="search-input-wrapper">
                                 <i class="bi bi-search"></i>
@@ -151,190 +61,120 @@
                                     value="{{ $searchValue }}">
                             </div>
                         </div>
-
                         <div class="col-lg-2">
-                            <button type="submit" class="btn btn-primary w-100 custom-btn">
-                                Search
-                            </button>
+                            <button type="submit" class="btn btn-primary w-100 custom-btn">Search</button>
                         </div>
-
                     </div>
-
                     @if($searchValue !== '')
                         <div class="mt-3">
-                            <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-secondary custom-btn">
-                                Clear
+                            <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Clear
                             </a>
                         </div>
                     @endif
                 </form>
-
             </div>
 
-            @forelse($classCollection as $class)
-                @php
-                    $schedules = $class->schedules ?? collect();
-                    $categoryFees = $class->categoryFees ?? collect();
+            <!-- Classes List -->
+            @forelse($classes as $classItem)
+                    @php
+                        // Access data using array syntax (mobile API structure)
+                        $studentClass = $classItem['student_class'];
+                        $categoryFee = $classItem['category_fee'];
+                        $schedule = $classItem['schedule'];
+                    @endphp
 
-                    $firstFee = $categoryFees->first();
-                @endphp
-
-                <div class="class-card mb-4">
-
-                    <div class="class-card-header">
-
-                        <div>
-                            <h5 class="mb-1 fw-bold">{{ $class->class_name }}</h5>
-
-                            <div class="meta-line">
-                                Grade: {{ optional($class->grade)->grade_name ?? '-' }}
-                                <span class="meta-separator">|</span>
-                                Subject: {{ optional($class->subject)->subject_name ?? '-' }}
-                                <span class="meta-separator">|</span>
-                                Teacher: {{ optional($class->teacher)->initials ?? '-' }}
+                    <div class="class-card mb-4">
+                        <div class="class-card-header">
+                            <div>
+                                <h5 class="mb-1 fw-bold">{{ $studentClass['class_name'] }}</h5>
+                                <div class="meta-line">
+                                    Grade: {{ $studentClass['grade']['grade_name'] ?? '-' }}
+                                    <span class="meta-separator">|</span>
+                                    Subject: {{ $studentClass['subject']['subject_name'] ?? '-' }}
+                                    <span class="meta-separator">|</span>
+                                    Teacher: {{ $studentClass['teacher']['full_name'] ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="class-badges">
+                                <span class="badge bg-primary custom-badge">Schedule</span>
+                                <span class="badge bg-success custom-badge">
+                                    {{ $categoryFee['fee'] ?? 0 }} LKR
+                                </span>
                             </div>
                         </div>
 
-                        <div class="class-badges">
-                            <span class="badge bg-primary custom-badge">
-                                {{ $schedules->count() }} Schedules
-                            </span>
-
-                            <span class="badge bg-success custom-badge">
-                                {{ $categoryFees->count() }} Fees
-                            </span>
-
-                            @if($class->is_active)
-                                <span class="badge bg-success custom-badge">Active</span>
-                            @else
-                                <span class="badge bg-secondary custom-badge">Inactive</span>
-                            @endif
-                        </div>
-
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table custom-table align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Class</th>
-                                    <th>Category Fees</th>
-                                    <th>Teacher</th>
-                                    <th>Hall</th>
-                                    <th class="text-end" width="220">Actions</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @forelse($schedules as $schedule)
-                                                    <tr>
-                                                        <td>
-                                                            <div class="fw-semibold">
-                                                                {{ \Carbon\Carbon::parse($schedule->start_time)->format('h:i A') }}
-                                                                -
-                                                                {{ \Carbon\Carbon::parse($schedule->end_time)->format('h:i A') }}
-                                                            </div>
-                                                        </td>
-
-                                                        <td>
-                                                            <div class="fw-bold">
-                                                                {{ $class->class_name }}
-                                                            </div>
-                                                            <small class="text-muted">
-                                                                {{ optional($class->grade)->grade_name ?? '-' }}
-                                                                /
-                                                                {{ optional($class->subject)->subject_name ?? '-' }}
-                                                            </small>
-                                                        </td>
-
-                                                        <td>
-                                                            @forelse($categoryFees as $fee)
-                                                                <span class="fee-pill">
-                                                                    {{ optional($fee->category)->category_name ?? '-' }}
-                                                                    · Rs. {{ number_format($fee->fee, 2) }}
-                                                                    · Fee ID: {{ $fee->id }}
-                                                                </span>
-                                                                <br>
-                                                            @empty
-                                                                <span class="text-muted">No Category Fees</span>
-                                                            @endforelse
-                                                        </td>
-
-                                                        <td>
-                                                            <div class="fw-semibold">
-                                                                {{ optional($class->teacher)->initials ?? '-' }}
-                                                            </div>
-                                                        </td>
-
-                                                        <td>
-                                                            <span class="fw-semibold">
-                                                                {{ optional($schedule->hall)->hall_name ?? '-' }}
-                                                            </span>
-                                                        </td>
-
-                                                        <td>
-                                                            <div class="action-buttons">
-
-                                                                @if($firstFee)
-                                                                                            <a href="{{ route('admin.attendance.index', [
-                                                                        'class_schedule_id' => $schedule->id,
-                                                                        'student_class_id' => $class->id,
-                                                                        'class_category_fee_id' => $firstFee->id,
-                                                                    ]) }}" class="action-btn view-btn" title="Mark Attendance">
-                                                                                                <i class="bi bi-check2-square"></i>
-                                                                                            </a>
-                                                                @else
-                                                                    <button type="button" class="action-btn disabled-btn" disabled
-                                                                        title="No Category Fee">
-                                                                        <i class="bi bi-check2-square"></i>
-                                                                    </button>
-                                                                @endif
-
-                                                                <form action="{{ route('admin.class-schedules.statusUpdate', $schedule) }}"
-                                                                    method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    @method('PATCH')
-
-                                                                    <button type="submit" class="action-btn complete-btn" title="Complete">
-                                                                        <i class="bi bi-check-circle-fill"></i>
-                                                                    </button>
-                                                                </form>
-
-                                                                <a href="{{ route('admin.today-attendance.index', [
-                                        'class_schedule_id' => $schedule->id,
-                                        'student_class_id' => $class->id,
-                                        'class_category_fee_id' => $firstFee?->id,
-                                    ]) }}" class="action-btn today-attendance-btn" title="View Attendance">
-                                                                    <i class="bi bi-eye"></i>
-                                                                </a>
-
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                @empty
+                        <div class="table-responsive">
+                            <table class="table custom-table align-middle mb-0">
+                                <thead>
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted py-5">
-                                            <div class="empty-state">
-                                                <i class="bi bi-calendar-x"></i>
-                                                <h5>No Schedules Found</h5>
-                                                <p>No classes are available for today</p>
+                                        <th>Time</th>
+                                        <th>Class</th>
+                                        <th>Category Fees</th>
+                                        <th>Teacher</th>
+                                        <th>Hall</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">
+                                                {{ \Carbon\Carbon::parse($schedule['start_time'])->format('H:i') }} -
+                                                {{ \Carbon\Carbon::parse($schedule['end_time'])->format('H:i') }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">{{ $studentClass['class_name'] }}</div>
+                                            <small class="text-muted">
+                                                {{ $studentClass['grade']['grade_name'] ?? '-' }} /
+                                                {{ $studentClass['subject']['subject_name'] ?? '-' }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            @if($categoryFee && isset($categoryFee['category']))
+                                                <span class="fee-pill">
+                                                    {{ $categoryFee['category']['category_name'] ?? '-' }}
+                                                    · Rs. {{ number_format($categoryFee['fee'] ?? 0, 2) }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted">No fee configured</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $studentClass['teacher']['full_name'] ?? '-' }}</td>
+                                        <td>{{ $schedule['hall']['hall_name'] ?? '-' }}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="{{ route('admin.attendance.index', [
+                    'class_schedule_id' => $schedule['id'],
+                    'student_class_id' => $studentClass['id'],
+                    'class_category_fee_id' => $categoryFee['id'] ?? 0,
+                ]) }}" class="action-btn view-btn" title="Take Attendance">
+                                                    <i class="bi bi-check2-square"></i>
+                                                </a>
+                                                <button type="button" class="action-btn complete-btn" title="Mark Completed">
+                                                    <i class="bi bi-check-circle-fill"></i>
+                                                </button>
+                                                <a href="{{ route('admin.today-attendance.index', [
+                    'class_schedule_id' => $schedule['id'],
+                    'student_class_id' => $studentClass['id'],
+                    'class_category_fee_id' => $categoryFee['id'] ?? 0,
+                ]) }}" class="action-btn today-attendance-btn" title="View Attendance">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-                </div>
             @empty
                 <div class="alert alert-info border-0 shadow-sm">
                     <i class="bi bi-info-circle-fill me-2"></i>
-                    No classes today.
+                    No classes scheduled for today.
                 </div>
             @endforelse
-
         </div>
     </div>
 @endsection
@@ -343,6 +183,18 @@
     <style>
         .today-classes-page {
             animation: fadeIn .4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero-card,
@@ -393,19 +245,19 @@
             flex-shrink: 0;
         }
 
-        .blue {
+        .stats-icon.blue {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
         }
 
-        .green {
+        .stats-icon.green {
             background: linear-gradient(135deg, #10b981, #34d399);
         }
 
-        .orange {
+        .stats-icon.orange {
             background: linear-gradient(135deg, #f59e0b, #fbbf24);
         }
 
-        .red {
+        .stats-icon.red {
             background: linear-gradient(135deg, #ef4444, #f87171);
         }
 
@@ -451,10 +303,16 @@
             font-weight: 600;
             border: none;
             transition: .2s ease;
+            cursor: pointer;
         }
 
-        .custom-btn:hover {
+        .custom-btn:hover:not(:disabled) {
             transform: translateY(-2px);
+        }
+
+        .custom-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .search-card {
@@ -486,6 +344,7 @@
         .custom-input:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+            outline: none;
         }
 
         .class-card {
@@ -524,6 +383,7 @@
             text-transform: uppercase;
             padding: 1rem;
             white-space: nowrap;
+            font-weight: 600;
         }
 
         .custom-table tbody tr {
@@ -580,6 +440,7 @@
             justify-content: center;
             text-decoration: none;
             transition: .2s ease;
+            cursor: pointer;
         }
 
         .action-btn:hover {
@@ -594,6 +455,11 @@
         .complete-btn {
             background: #ecfdf5;
             color: #10b981;
+        }
+
+        .today-attendance-btn {
+            background: #fef3c7;
+            color: #d97706;
         }
 
         .disabled-btn {
@@ -634,6 +500,10 @@
             .hero-actions .btn,
             .header-buttons .btn {
                 flex: 1;
+            }
+
+            .action-buttons {
+                justify-content: flex-start;
             }
         }
     </style>
