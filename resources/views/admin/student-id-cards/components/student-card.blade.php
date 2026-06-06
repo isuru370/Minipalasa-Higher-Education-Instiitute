@@ -14,7 +14,7 @@
     $address3 = trim(str_replace(['"', "'", '&quot;'], '', $address3));
     
     $addressParts = array_filter([$address1, $address2, $address3]);
-    $address = implode(', ', $addressParts);
+    $address = implode(' ', $addressParts);
     $address = str_replace(['"', "'"], '', $address);
     
     $studentData = [

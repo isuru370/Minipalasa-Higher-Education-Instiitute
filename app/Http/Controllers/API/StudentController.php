@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\QuickPhoto;
 use App\Models\Student;
+use App\Services\StudentQRService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,39 @@ class StudentController extends Controller
             'success' => true,
             'data' => $students,
         ]);
+    }
+
+    public function studentDetailsSearch(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'qr_code' => ['required', 'string', 'max:150'],
+        ]);
+
+        $qrResult = StudentQRService::read($validated['qr_code']);
+
+        if (! $qrResult['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => $qrResult['message'] ?? 'Failed to read QR code',
+            ], $qrResult['status_code'] ?? 400);
+        }
+
+        $student = Student::query()
+            ->with(['grade'])
+            ->find($qrResult['student_id']);
+
+        if (! $student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Student details loaded successfully',
+            'student' => $student,
+        ], 200);
     }
 
     public function searchStudent(Request $request): JsonResponse

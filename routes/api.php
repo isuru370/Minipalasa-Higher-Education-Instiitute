@@ -81,6 +81,11 @@ Route::middleware([
     )->name('api.students.all');
 
     Route::get(
+        '/students/filter',
+        [StudentController::class, 'studentDetailsSearch']
+    )->name('api.students.filter');
+
+    Route::get(
         '/students/search',
         [StudentController::class, 'searchStudent']
     )->name('api.students.search');
