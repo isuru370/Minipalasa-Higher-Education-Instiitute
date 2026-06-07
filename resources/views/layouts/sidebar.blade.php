@@ -301,6 +301,22 @@
 
         <!-- REPORTS -->
         <div class="sidebar-section">
+            <div class="sidebar-section-title">RECEIPTS</div>
+
+            @if(hasPermission('receipts.index'))
+                <div class="nav-item">
+                    <button type="button"
+                        class="nav-link-custom {{ request()->routeIs('admin.receipts.*') ? 'active' : '' }}"
+                        data-route="admin.receipts.index" data-href="{{ route('admin.receipts.index') }}">
+                        <i class="bi bi-file-earmark-person"></i>
+                        <span>Receipts</span>
+                    </button>
+                </div>
+            @endif
+        </div>
+
+        <!-- REPORTS -->
+        <div class="sidebar-section">
             <div class="sidebar-section-title">REPORTS</div>
 
             @if(hasPermission('daily-report.index'))

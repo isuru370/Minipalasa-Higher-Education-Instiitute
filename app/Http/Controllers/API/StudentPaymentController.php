@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\SendPaymentSms;
 use App\Models\Payment;
 use App\Models\StudentClassEnrollment;
+use App\Services\ReceiptNumberService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -165,7 +166,7 @@ class StudentPaymentController extends Controller
                         $item['payment_month'] . '-01'
                     );
 
-                    $receiptNumber = $this->generateReceiptNumber();
+                    $receiptNumber = ReceiptNumberService::generate();
                     $referenceNumber = $this->generateReferenceNumber();
 
                     $payment = Payment::create([
@@ -437,38 +438,6 @@ class StudentPaymentController extends Controller
             'payment_id' => $payment->id,
             'message' => $e->getMessage(),
         ]);
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Generate Receipt Number
-    |--------------------------------------------------------------------------
-    */
-    private function generateReceiptNumber(): string
-    {
-        $date = now()->format('Ymd');
-
-        $lastReceipt = Payment::withTrashed()
-            ->whereDate('created_at', today())
-            ->where('receipt_number', 'like', 'REC-' . $date . '-%')
-            ->latest('id')
-            ->value('receipt_number');
-
-        $nextNumber = 1;
-
-        if ($lastReceipt) {
-
-            $parts = explode('-', $lastReceipt);
-
-            $lastSequence = (int) end($parts);
-
-            $nextNumber = $lastSequence + 1;
-        }
-
-        return 'REC-' .
-            $date .
-            '-' .
-            str_pad((string) $nextNumber, 4, '0', STR_PAD_LEFT);
     }
 
     /*

@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\InstitutePaymentReportController;
 use App\Http\Controllers\Admin\InstituteReportController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MonthlyReportController;
+use App\Http\Controllers\Admin\ReceiptController;
 use App\Http\Controllers\Admin\StudentIDCardController;
 use App\Http\Controllers\Admin\StudentImageController;
 use App\Http\Controllers\Admin\TeacherReportController;
@@ -733,25 +734,25 @@ Route::middleware([
         Route::prefix('student-id-cards')
             ->name('student-id-cards.')
             ->group(function () {
-                
+
                 // View routes
                 Route::get('/', [StudentIDCardController::class, 'index'])
                     ->name('index');
-                
+
                 Route::get('{studentIdCard}/print', [StudentIDCardController::class, 'print'])
                     ->name('print');
-                
+
                 // Download routes (NO Browsershot - Client side)
                 Route::get('{studentIdCard}/download', [StudentIDCardController::class, 'downloadSingle'])
                     ->name('download-single');
-                
+
                 Route::post('download-bulk', [StudentIDCardController::class, 'downloadBulk'])
                     ->name('download-bulk');
-                
+
                 // Status update routes (using Fetch API)
                 Route::patch('{studentIdCard}/status', [StudentIDCardController::class, 'updateStatus'])
                     ->name('update-status');
-                
+
                 Route::patch('bulk-status', [StudentIDCardController::class, 'bulkUpdateStatus'])
                     ->name('bulk-update-status');
             });
@@ -858,4 +859,9 @@ Route::middleware([
             [LogController::class, 'stats']
         )
             ->name('logs.laravel.stats');
+
+        Route::get(
+            '/receipts',
+            [ReceiptController::class, 'index']
+        )->name('receipts.index');
     });
