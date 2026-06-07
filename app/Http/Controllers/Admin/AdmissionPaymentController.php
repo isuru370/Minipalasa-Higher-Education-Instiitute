@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admission;
 use App\Models\AdmissionPayment;
 use App\Models\Student;
+use App\Services\ReceiptNumberService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -70,6 +71,9 @@ class AdmissionPaymentController extends Controller
         $validated['payment_method'] = $request->input('payment_method', 'cash');
         $validated['status'] = $request->input('status', 'paid');
         $validated['note'] = $request->filled('note') ? $request->note : null;
+
+        // Generate Global Receipt Number
+        $validated['receipt_number'] = ReceiptNumberService::generate();
 
         $payment = AdmissionPayment::create($validated);
 

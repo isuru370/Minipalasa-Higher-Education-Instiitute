@@ -123,25 +123,6 @@ class AdmissionPayment extends Model
 
             /*
             |--------------------------------------------------------------------------
-            | Receipt Number Generate
-            |--------------------------------------------------------------------------
-            */
-
-            if (empty($payment->receipt_number)) {
-
-                $date = now()->format('Ymd');
-
-                $countToday = self::whereDate('created_at', today())->count() + 1;
-
-                $payment->receipt_number =
-                    'REC-NO-' .
-                    $date .
-                    '-' .
-                    str_pad($countToday, 3, '0', STR_PAD_LEFT);
-            }
-
-            /*
-            |--------------------------------------------------------------------------
             | Default Note
             |--------------------------------------------------------------------------
             */
