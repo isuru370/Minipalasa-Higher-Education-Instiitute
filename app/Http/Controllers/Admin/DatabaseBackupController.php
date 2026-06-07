@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BackupLog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 use ZipArchive;
 
@@ -24,135 +22,111 @@ class DatabaseBackupController extends Controller
     }
 
     public function export(Request $request)
-{
-    $log = BackupLog::create([
-        'user_id'    => auth()->id(),
-        'action'     => 'export',
-        'status'     => 'pending',
-        'message'    => 'Database backup export started.',
-        'ip_address' => $request->ip(),
-        'user_agent' => $request->userAgent(),
-        'started_at' => now(),
-    ]);
-
-    try {
-
-        Log::info('Backup export started', [
-            'user_id' => auth()->id(),
-            'time' => now()->toDateTimeString(),
+    {
+        $log = BackupLog::create([
+            'user_id'    => auth()->id(),
+            'action'     => 'export',
+            'status'     => 'pending',
+            'message'    => 'Database backup export started.',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'started_at' => now(),
         ]);
 
-        Artisan::call('backup:run', [
-            '--only-to-disk' => 'local',
-        ]);
+        try {
 
-        Log::info('Backup command executed', [
-            'output' => Artisan::output(),
-        ]);
+            $connection = config('database.default');
+            $db = config("database.connections.{$connection}");
 
-        $backupFolder = config(
-            'backup.backup.name',
-            config('app.name')
-        );
+            $host     = $db['host'];
+            $port     = $db['port'];
+            $database = $db['database'];
+            $username = $db['username'];
+            $password = $db['password'];
 
-        $disk = Storage::disk('local');
+            $tempDir = storage_path('app/backup-temp');
 
-        $allFiles = $disk->allFiles($backupFolder);
+            if (!File::exists($tempDir)) {
+                File::makeDirectory($tempDir, 0755, true);
+            }
 
-        Log::info('Backup folder scanned', [
-            'folder' => $backupFolder,
-            'files_count' => count($allFiles),
-            'files' => $allFiles,
-        ]);
+            $fileName = 'backup_' . now()->format('Y_m_d_H_i_s');
 
-        $latestZip = collect($allFiles)
-            ->filter(fn($file) => str_ends_with($file, '.zip'))
-            ->sortByDesc(fn($file) => $disk->lastModified($file))
-            ->first();
+            $sqlFile = $tempDir . '/' . $fileName . '.sql';
 
-        if (!$latestZip) {
+            $command = sprintf(
+                'mysqldump --skip-ssl --host=%s --port=%s --user=%s %s > %s',
+                escapeshellarg($host),
+                escapeshellarg($port),
+                escapeshellarg($username),
+                escapeshellarg($database),
+                escapeshellarg($sqlFile)
+            );
 
-            Log::error('No backup zip found', [
-                'folder' => $backupFolder,
+            $process = Process::fromShellCommandline(
+                $command,
+                null,
+                [
+                    'MYSQL_PWD' => $password,
+                ]
+            );
+
+            $process->setTimeout(300);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+
+                throw new \Exception(
+                    $process->getErrorOutput()
+                );
+            }
+
+            $zipFile = $tempDir . '/' . $fileName . '.zip';
+
+            $zip = new ZipArchive();
+
+            if ($zip->open($zipFile, ZipArchive::CREATE) !== true) {
+                throw new \Exception('Unable to create zip file.');
+            }
+
+            $zip->addFile(
+                $sqlFile,
+                basename($sqlFile)
+            );
+
+            $zip->close();
+
+            File::delete($sqlFile);
+
+            $log->update([
+                'status'       => 'success',
+                'file_name'    => basename($zipFile),
+                'message'      => 'Database backup exported successfully.',
+                'completed_at' => now(),
+            ]);
+
+            return response()->download(
+                $zipFile,
+                basename($zipFile)
+            )->deleteFileAfterSend(true);
+        } catch (\Throwable $e) {
+
+            Log::error('Backup Export Failed', [
+                'message' => $e->getMessage(),
             ]);
 
             $log->update([
                 'status'       => 'failed',
-                'message'      => 'Backup file not found after backup:run.',
+                'message'      => $e->getMessage(),
                 'completed_at' => now(),
             ]);
 
             return back()->with(
                 'error',
-                'Backup file not found.'
+                'Database export failed.'
             );
         }
-
-        $filePath = storage_path('app/' . $latestZip);
-
-        Log::info('Backup file located', [
-            'relative_path' => $latestZip,
-            'full_path' => $filePath,
-            'exists' => file_exists($filePath),
-            'size' => file_exists($filePath)
-                ? filesize($filePath)
-                : 0,
-        ]);
-
-        if (!file_exists($filePath)) {
-
-            Log::error('Backup file missing on disk', [
-                'path' => $filePath,
-            ]);
-
-            $log->update([
-                'status'       => 'failed',
-                'message'      => 'Backup file does not exist on server.',
-                'completed_at' => now(),
-            ]);
-
-            return back()->with(
-                'error',
-                'Backup file missing on server.'
-            );
-        }
-
-        $log->update([
-            'status'       => 'success',
-            'file_name'    => basename($latestZip),
-            'message'      => 'Database backup export completed successfully.',
-            'completed_at' => now(),
-        ]);
-
-        Log::info('Backup download started', [
-            'file' => basename($latestZip),
-        ]);
-
-        return response()->download(
-            $filePath,
-            basename($latestZip)
-        );
-    } catch (\Throwable $e) {
-
-        Log::error('Backup Export Failed', [
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString(),
-        ]);
-
-        $log->update([
-            'status'       => 'failed',
-            'message'      => 'Export failed: ' . $e->getMessage(),
-            'completed_at' => now(),
-        ]);
-
-        return back()->with(
-            'error',
-            'Database export failed. Check laravel.log'
-        );
     }
-}
 
     public function import(Request $request)
     {
