@@ -1,46 +1,58 @@
 @extends('layouts.app')
 
-@section('title', 'Receipts - ' . config('app.name', 'EDU NEXORA'))
-@section('page-title', 'Receipts')
+@section('title', 'Student Payments')
+@section('page-title', 'Student Payments')
 
 @section('content')
 
-    <div class="receipts-page">
+    <div class="student-payments-page">
 
         {{-- Stats Cards --}}
         <div class="row g-4 mb-4">
-            <div class="col-xl-4 col-md-6">
+            <div class="col-xl-3 col-md-6">
                 <div class="stats-card">
                     <div class="stats-icon blue">
                         <i class="bi bi-receipt"></i>
                     </div>
                     <div>
-                        <h3>{{ number_format($totalReceipts ?? 0) }}</h3>
-                        <p>Total Receipts</p>
+                        <h3>{{ number_format($payments->total()) }}</h3>
+                        <p>Total Payments</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-4 col-md-6">
+            <div class="col-xl-3 col-md-6">
                 <div class="stats-card">
                     <div class="stats-icon green">
                         <i class="bi bi-cash-stack"></i>
                     </div>
                     <div>
-                        <h3>Rs. {{ number_format($totalAmount ?? 0, 2) }}</h3>
+                        <h3>Rs. {{ number_format($payments->sum('amount'), 2) }}</h3>
                         <p>Total Amount</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-4 col-md-6">
+            <div class="col-xl-3 col-md-6">
                 <div class="stats-card">
                     <div class="stats-icon purple">
-                        <i class="bi bi-calendar-week"></i>
+                        <i class="bi bi-qr-code"></i>
                     </div>
                     <div>
-                        <h3>{{ number_format($receipts->count() ?? 0) }}</h3>
-                        <p>This Period</p>
+                        <h3>{{ number_format($payments->where('mark_method', 'qr')->count()) }}</h3>
+                        <p>QR Payments</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card">
+                    <div class="stats-icon orange">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+                    <div>
+                        <h3>{{ number_format($payments->where('mark_method', 'manual')->count()) }}</h3>
+                        <p>Manual Payments</p>
                     </div>
                 </div>
             </div>
@@ -53,12 +65,12 @@
                     <i class="bi bi-funnel-fill"></i>
                 </div>
                 <div>
-                    <h5>Filter Receipts</h5>
-                    <p>Search and filter your receipts</p>
+                    <h5>Filter Payments</h5>
+                    <p>Search and filter student payments</p>
                 </div>
             </div>
 
-            <form method="GET" action="{{ route('admin.receipts.index') }}">
+            <form method="GET" action="{{ route('admin.student-payments.index') }}">
                 <div class="row g-3">
                     <div class="col-lg-3 col-md-6">
                         <label class="form-label">
@@ -70,15 +82,20 @@
 
                     <div class="col-lg-3 col-md-6">
                         <label class="form-label">
-                            <i class="bi bi-tag"></i> Type
+                            <i class="bi bi-person"></i> Student Name/ID
                         </label>
-                        <select name="type" class="form-select custom-input">
-                            <option value="">All Types</option>
-                            <option value="Student Payment" @selected(request('type') === 'Student Payment')>Student Payment
-                            </option>
-                            <option value="Admission Payment" @selected(request('type') === 'Admission Payment')>Admission
-                                Payment</option>
-                            <option value="Extra Income" @selected(request('type') === 'Extra Income')>Extra Income</option>
+                        <input type="text" name="student" class="form-control custom-input" value="{{ request('student') }}"
+                            placeholder="Search by student name or ID">
+                    </div>
+
+                    <div class="col-lg-2 col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-qr-code"></i> Mark Method
+                        </label>
+                        <select name="mark_method" class="form-select custom-input">
+                            <option value="">All Methods</option>
+                            <option value="qr" @selected(request('mark_method') === 'qr')>QR Code</option>
+                            <option value="manual" @selected(request('mark_method') === 'manual')>Manual</option>
                         </select>
                     </div>
 
@@ -98,12 +115,12 @@
                             value="{{ request('to_date') }}">
                     </div>
 
-                    <div class="col-lg-2 col-md-12">
+                    <div class="col-lg-12">
                         <div class="filter-actions">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-search"></i> Search
                             </button>
-                            <a href="{{ route('admin.receipts.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('admin.student-payments.index') }}" class="btn btn-secondary">
                                 <i class="bi bi-arrow-repeat"></i> Reset
                             </a>
                         </div>
@@ -112,100 +129,130 @@
             </form>
         </div>
 
-        {{-- Receipts Table --}}
-        <div class="receipts-card">
-            <div class="receipts-header">
+        {{-- Payments Table --}}
+        <div class="payments-card">
+            <div class="payments-header">
                 <div>
                     <h4>
-                        <i class="bi bi-receipt"></i> Receipt List
+                        <i class="bi bi-cash-stack"></i> Student Payments
                     </h4>
-                    <p>View and manage all payment receipts</p>
+                    <p>View and manage all student payment transactions</p>
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-print" onclick="window.print()">
                         <i class="bi bi-printer"></i> Print
                     </button>
-
-                    <a href="{{ route('admin.receipts.export.excel', request()->query()) }}" class="btn btn-success">
-                        Excel Export
-                    </a>
-
-                    <a href="{{ route('admin.receipts.export.pdf', request()->query()) }}" class="btn btn-danger">
-                        PDF Export
-                    </a>
+                    <button class="btn btn-export" id="exportBtn">
+                        <i class="bi bi-file-earmark-excel"></i> Export
+                    </button>
                 </div>
             </div>
 
-            <div class="receipts-body">
+            <div class="payments-body">
                 <div class="table-responsive">
-                    <table class="receipts-table">
+                    <table class="payments-table">
                         <thead>
                             <tr>
                                 <th>Receipt No</th>
-                                <th>Type</th>
+                                <th>Student</th>
+                                <th>Class</th>
+                                <th>Category</th>
                                 <th>Amount</th>
+                                <th>Method</th>
+                                <th>Collected By</th>
                                 <th>Date & Time</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($receipts as $receipt)
+                            @forelse($payments as $payment)
                                 <tr>
                                     <td>
                                         <div class="receipt-number">
                                             <i class="bi bi-receipt-cutoff"></i>
-                                            <a href="{{ $receipt['url'] }}" class="receipt-link">
-                                                {{ $receipt['receipt_number'] }}
-                                            </a>
+                                            <span class="receipt-no">{{ $payment->receipt_number ?? 'N/A' }}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        @php
-                                            $typeColors = [
-                                                'Student Payment' => ['class' => 'type-student', 'icon' => 'bi-mortarboard'],
-                                                'Admission Payment' => ['class' => 'type-admission', 'icon' => 'bi-journal-bookmark'],
-                                                'Extra Income' => ['class' => 'type-extra', 'icon' => 'bi-cash'],
-                                            ];
-                                            $typeInfo = $typeColors[$receipt['type']] ?? ['class' => 'type-default', 'icon' => 'bi-receipt'];
-                                        @endphp
-                                        <span class="type-badge {{ $typeInfo['class'] }}">
-                                            <i class="bi {{ $typeInfo['icon'] }} me-1"></i>
-                                            {{ $receipt['type'] }}
+                                        <div class="student-info">
+                                            <div class="student-avatar">
+                                                {{ strtoupper(substr($payment->student->initial_name ?? 'N', 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <div class="student-name">{{ $payment->student->initial_name ?? 'N/A' }}</div>
+                                                <small class="student-id">ID:
+                                                    {{ $payment->student->custom_id ?? 'N/A' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="class-name">
+                                            <i class="bi bi-book"></i>
+                                            {{ $payment->enrollment->studentClass->class_name ?? 'N/A' }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="category-badge">
+                                            <i class="bi bi-tag"></i>
+                                            {{ $payment->enrollment->classCategoryFee->category->category_name ?? 'N/A' }}
                                         </span>
                                     </td>
                                     <td class="amount-cell">
                                         <span class="currency">Rs.</span>
-                                        <span class="amount">{{ number_format($receipt['amount'], 2) }}</span>
+                                        <span class="amount">{{ number_format($payment->amount, 2) }}</span>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $methodColors = [
+                                                'qr' => ['class' => 'method-qr', 'icon' => 'bi-qr-code', 'text' => 'QR Code'],
+                                                'manual' => ['class' => 'method-manual', 'icon' => 'bi-pencil', 'text' => 'Manual'],
+                                            ];
+                                            $methodInfo = $methodColors[$payment->mark_method] ?? ['class' => 'method-default', 'icon' => 'bi-question', 'text' => ucfirst($payment->mark_method)];
+                                        @endphp
+                                        <span class="method-badge {{ $methodInfo['class'] }}">
+                                            <i class="bi {{ $methodInfo['icon'] }}"></i>
+                                            {{ $methodInfo['text'] }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="collector-info">
+                                            <i class="bi bi-person-circle"></i>
+                                            {{ $payment->collectedBy->name ?? 'System' }}
+                                        </div>
                                     </td>
                                     <td>
                                         <div class="date-time-cell">
                                             <div class="date">
                                                 <i class="bi bi-calendar3"></i>
-                                                {{ \Carbon\Carbon::parse($receipt['date'])->format('Y-m-d') }}
+                                                {{ $payment->created_at->format('Y-m-d') }}
                                             </div>
                                             <div class="time">
                                                 <i class="bi bi-clock"></i>
-                                                {{ \Carbon\Carbon::parse($receipt['date'])->format('h:i A') }}
+                                                {{ $payment->created_at->format('h:i A') }}
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="{{ $receipt['url'] }}" class="action-btn view-btn" title="View Receipt">
+                                            <a href="{{ route('admin.student-payments.show', $payment->id) }}"
+                                                class="action-btn view-btn" title="View Payment">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            
+                                            <a href="{{ route('admin.student-payments.receipt', $payment->id) }}"
+                                                class="action-btn print-btn" title="Print Receipt" target="_blank">
+                                                <i class="bi bi-printer"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-5">
+                                    <td colspan="9" class="text-center py-5">
                                         <div class="empty-state">
                                             <i class="bi bi-inbox"></i>
-                                            <h5>No Receipts Found</h5>
-                                            <p>No receipts match your search criteria</p>
-                                            <a href="{{ route('admin.receipts.index') }}" class="btn btn-primary mt-2">
+                                            <h5>No Payments Found</h5>
+                                            <p>No student payments match your search criteria</p>
+                                            <a href="{{ route('admin.student-payments.index') }}" class="btn btn-primary mt-2">
                                                 <i class="bi bi-arrow-repeat"></i> Clear Filters
                                             </a>
                                         </div>
@@ -216,11 +263,9 @@
                     </table>
                 </div>
 
-                @if(method_exists($receipts, 'hasPages') && $receipts->hasPages())
-                    <div class="receipts-pagination">
-                        {{ $receipts->links() }}
-                    </div>
-                @endif
+                <div class="payments-pagination">
+                    {{ $payments->links() }}
+                </div>
             </div>
         </div>
     </div>
@@ -229,7 +274,7 @@
 
 @push('styles')
     <style>
-        .receipts-page {
+        .student-payments-page {
             animation: fadeInUp 0.4s ease;
         }
 
@@ -284,6 +329,10 @@
 
         .stats-icon.purple {
             background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+        }
+
+        .stats-icon.orange {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
         }
 
         .stats-card h3 {
@@ -373,12 +422,11 @@
         .filter-actions {
             display: flex;
             gap: 0.8rem;
-            margin-top: 1.8rem;
+            margin-top: 0.8rem;
         }
 
         .filter-actions .btn {
-            flex: 1;
-            padding: 0.6rem 1rem;
+            padding: 0.6rem 1.5rem;
             border-radius: 12px;
             font-weight: 600;
         }
@@ -404,8 +452,8 @@
             transform: translateY(-2px);
         }
 
-        /* Receipts Card */
-        .receipts-card {
+        /* Payments Card */
+        .payments-card {
             background: #ffffff;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
@@ -413,7 +461,7 @@
             overflow: hidden;
         }
 
-        .receipts-header {
+        .payments-header {
             padding: 1.2rem 1.5rem;
             background: linear-gradient(135deg, #f8fafc, #ffffff);
             border-bottom: 1px solid #eef2f7;
@@ -424,14 +472,14 @@
             gap: 1rem;
         }
 
-        .receipts-header h4 {
+        .payments-header h4 {
             font-size: 1.1rem;
             font-weight: 700;
             margin: 0;
             color: #1e293b;
         }
 
-        .receipts-header p {
+        .payments-header p {
             margin: 0;
             font-size: 0.75rem;
             color: #64748b;
@@ -458,13 +506,28 @@
             transform: translateY(-2px);
         }
 
-        /* Receipts Table */
-        .receipts-table {
+        .btn-export {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Payments Table */
+        .payments-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .receipts-table thead th {
+        .payments-table thead th {
             background: #f8fafc;
             padding: 1rem 1rem;
             font-size: 0.7rem;
@@ -475,16 +538,16 @@
             border-bottom: 1px solid #eef2f7;
         }
 
-        .receipts-table tbody tr {
+        .payments-table tbody tr {
             border-bottom: 1px solid #f1f5f9;
             transition: all 0.2s ease;
         }
 
-        .receipts-table tbody tr:hover {
+        .payments-table tbody tr:hover {
             background: #f8fafc;
         }
 
-        .receipts-table tbody td {
+        .payments-table tbody td {
             padding: 1rem;
             font-size: 0.85rem;
             color: #334155;
@@ -503,47 +566,64 @@
             font-size: 1rem;
         }
 
-        .receipt-link {
+        .receipt-no {
             font-weight: 600;
             color: #4f46e5;
-            text-decoration: none;
-            transition: color 0.2s;
         }
 
-        .receipt-link:hover {
-            color: #7c3aed;
-            text-decoration: underline;
+        /* Student Info */
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
-        /* Type Badges */
-        .type-badge {
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .student-id {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* Class Name */
+        .class-name {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .class-name i {
+            color: #10b981;
+            font-size: 0.8rem;
+        }
+
+        /* Category Badge */
+        .category-badge {
             display: inline-flex;
             align-items: center;
-            padding: 0.35rem 0.8rem;
-            border-radius: 10px;
+            gap: 0.3rem;
+            padding: 0.3rem 0.7rem;
+            background: #f3e8ff;
+            color: #6b21a5;
+            border-radius: 8px;
             font-size: 0.7rem;
             font-weight: 600;
-            gap: 0.3rem;
-        }
-
-        .type-student {
-            background: #e0e7ff;
-            color: #4338ca;
-        }
-
-        .type-admission {
-            background: #d1fae5;
-            color: #059669;
-        }
-
-        .type-extra {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .type-default {
-            background: #f3f4f6;
-            color: #4b5563;
         }
 
         /* Amount Cell */
@@ -559,26 +639,45 @@
 
         .amount {
             color: #1e293b;
+            font-size: 0.9rem;
         }
 
-        /* Party Info */
-        .party-info {
-            display: flex;
+        /* Method Badge */
+        .method-badge {
+            display: inline-flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.3rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
-        .party-avatar {
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            border-radius: 10px;
+        .method-qr {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .method-manual {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .method-default {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        /* Collector Info */
+        .collector-info {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
+            gap: 0.4rem;
             font-size: 0.8rem;
+        }
+
+        .collector-info i {
+            color: #10b981;
         }
 
         /* Date Time Cell */
@@ -593,7 +692,7 @@
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .date i,
@@ -665,18 +764,18 @@
         }
 
         /* Pagination */
-        .receipts-pagination {
+        .payments-pagination {
             padding: 1rem 1.5rem;
             border-top: 1px solid #eef2f7;
             background: #f8fafc;
         }
 
-        .receipts-pagination .pagination {
+        .payments-pagination .pagination {
             justify-content: center;
             margin: 0;
         }
 
-        .receipts-pagination .page-link {
+        .payments-pagination .page-link {
             border-radius: 8px;
             margin: 0 2px;
             border: 1px solid #e2e8f0;
@@ -684,14 +783,14 @@
             transition: all 0.2s ease;
         }
 
-        .receipts-pagination .page-link:hover {
+        .payments-pagination .page-link:hover {
             background: #eff6ff;
             border-color: #4f46e5;
             color: #1e40af;
             transform: translateY(-2px);
         }
 
-        .receipts-pagination .active .page-link {
+        .payments-pagination .active .page-link {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             border-color: #4f46e5;
             color: white;
@@ -721,7 +820,7 @@
                 width: 100%;
             }
 
-            .receipts-header {
+            .payments-header {
                 flex-direction: column;
                 align-items: flex-start;
             }

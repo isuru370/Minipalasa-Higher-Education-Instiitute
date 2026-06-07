@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\MonthlyReportController;
 use App\Http\Controllers\Admin\ReceiptController;
 use App\Http\Controllers\Admin\StudentIDCardController;
 use App\Http\Controllers\Admin\StudentImageController;
+use App\Http\Controllers\Admin\StudentPaymentController;
 use App\Http\Controllers\Admin\TeacherReportController;
 use App\Http\Controllers\Admin\TeacherSalaryController;
 use App\Http\Controllers\Admin\TemporaryIDCardController;
@@ -239,6 +240,22 @@ Route::middleware([
             'students-export/pdf',
             [StudentController::class, 'exportPdf']
         )->name('students.exportPdf');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Student Payment Counter
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/students-payments',
+            [StudentPaymentController::class, 'index']
+        )->name('students-payments.index');
+
+        Route::get(
+            '/students-payments/{id}',
+            [StudentPaymentController::class, 'show']
+        )->name('students-payments.show');
 
 
         /*
@@ -864,4 +881,14 @@ Route::middleware([
             '/receipts',
             [ReceiptController::class, 'index']
         )->name('receipts.index');
+
+        Route::get(
+            '/receipts/export/excel',
+            [ReceiptController::class, 'exportExcel']
+        )->name('receipts.export.excel');
+
+        Route::get(
+            '/receipts/export/pdf',
+            [ReceiptController::class, 'exportPdf']
+        )->name('receipts.export.pdf');
     });
