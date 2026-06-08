@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdmissionPaymentController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\Auth\LoginController;
@@ -160,6 +161,22 @@ Route::middleware([
         [StudentPaymentController::class, 'store']
     )->name('api.student-payments.store');
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Student Admission Payment Delete
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/admission',
+        [AdmissionPaymentController::class, 'fetchAdmission']
+    )->name('api.admission-payment.fetch-admission');
+
+    Route::get(
+        '/admission-payments',
+        [AdmissionPaymentController::class, 'fetchAdmissionPayment']
+    )->name('api.admission-payment.fetch-admission-payments');
 
 
     /*
