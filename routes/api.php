@@ -178,6 +178,11 @@ Route::middleware([
         [AdmissionPaymentController::class, 'fetchAdmissionPayment']
     )->name('api.admission-payment.fetch-admission-payments');
 
+    Route::post(
+        '/admission-payments/store',
+        [AdmissionPaymentController::class, 'storeAdmissionPayment']
+    )->name('api.admission-payment.store-admission-payment');
+
 
     /*
     |--------------------------------------------------------------------------

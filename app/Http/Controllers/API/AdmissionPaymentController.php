@@ -130,4 +130,66 @@ class AdmissionPaymentController extends Controller
             ], 500);
         }
     }
+
+    public function storeAdmissionPayment(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'student_id'   => 'required|exists:students,id',
+                'admission_id' => 'required|exists:admissions,id',
+            ]);
+
+            $admission = Admission::active()
+                ->findOrFail($request->admission_id);
+
+            $payment = AdmissionPayment::create([
+                'student_id'   => $request->student_id,
+                'admission_id' => $admission->id,
+                'amount'       => $admission->amount,
+            ]);
+
+            Student::where('id', $request->student_id)
+                ->update([
+                    'admission' => true,
+                ]);
+
+            $student = Student::with('grade')
+                ->findOrFail($request->student_id);
+
+            $payment->load('admission');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Admission payment recorded successfully.',
+
+                'student' => $student,
+
+                'admission_payment' => [
+                    'id' => $payment->id,
+                    'receipt_number' => $payment->receipt_number,
+                    'amount' => $payment->amount,
+                    'status' => $payment->status,
+                    'paid_at' => optional($payment->paid_at)
+                        ->toDateTimeString(),
+                    'payment_method' => $payment->payment_method,
+                    'admission_name' => optional($payment->admission)->name,
+                    'note' => $payment->note,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error('Failed to store admission payment.', [
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to record admission payment.',
+            ], 500);
+        }
+    }
 }
