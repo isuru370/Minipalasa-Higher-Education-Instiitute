@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admission;
+use App\Models\AdmissionPayment;
 use App\Models\Grade;
 use App\Models\QuickPhoto;
 use App\Models\Student;
@@ -67,9 +69,11 @@ class StudentRegisterController extends Controller
             'guardian_mobile' => 'required|string|max:20',
             'grade_id'        => 'required|exists:grades,id',
             'gender'          => 'required|in:male,female,other',
+            'admission_id' => 'nullable|exists:admissions,id',
         ]);
 
-        $student = DB::transaction(function () use ($validated) {
+        $studentData = DB::transaction(function () use ($validated) {
+
             $customId = $this->generateCustomId((int) $validated['grade_id']);
 
             $imgUrl = match ($validated['gender']) {
@@ -80,7 +84,11 @@ class StudentRegisterController extends Controller
             $quickPhoto = null;
 
             if (!empty($validated['quick_image_id'])) {
-                $quickPhoto = QuickPhoto::where('custom_id', $validated['quick_image_id'])
+
+                $quickPhoto = QuickPhoto::where(
+                    'custom_id',
+                    $validated['quick_image_id']
+                )
                     ->lockForUpdate()
                     ->first();
 
@@ -100,11 +108,15 @@ class StudentRegisterController extends Controller
                 'img_url'                       => $imgUrl,
             ]);
 
-            $temporaryCard = TemporaryIdCard::where('temporary_id_number', $validated['temporary_qr_code'])
+            $temporaryCard = TemporaryIdCard::where(
+                'temporary_id_number',
+                $validated['temporary_qr_code']
+            )
                 ->lockForUpdate()
                 ->first();
 
             if ($temporaryCard) {
+
                 $temporaryCard->update([
                     'student_id'   => $student->id,
                     'status'       => 'active',
@@ -113,6 +125,7 @@ class StudentRegisterController extends Controller
             }
 
             if ($quickPhoto) {
+
                 $quickPhoto->update([
                     'is_active' => false,
                 ]);
@@ -128,13 +141,61 @@ class StudentRegisterController extends Controller
                 'is_reissue'          => false,
             ]);
 
-            return $student;
+            $admissionPayment = null;
+
+            if (!empty($validated['admission_id'])) {
+
+                $admission = Admission::findOrFail(
+                    $validated['admission_id']
+                );
+
+                $admissionPayment = AdmissionPayment::create([
+                    'student_id'   => $student->id,
+                    'admission_id' => $admission->id,
+                    'amount'       => $admission->amount,
+                ]);
+
+                $admissionPayment->load('admission');
+
+                $student->update([
+                    'admission' => true,
+                ]);
+            } else {
+
+                $student->update([
+                    'admission' => false,
+                ]);
+            }
+
+            $student->load('grade');
+
+            return [
+                'student'           => $student,
+                'admissionPayment'  => $admissionPayment,
+            ];
         });
 
         return response()->json([
             'success' => true,
             'message' => 'Student registered successfully',
-            'data'    => $student,
+
+            'student' => $studentData['student'],
+
+            'admission_payment' => $studentData['admissionPayment']
+                ? [
+                    'id' => $studentData['admissionPayment']->id,
+                    'receipt_number' => $studentData['admissionPayment']->receipt_number,
+                    'amount' => $studentData['admissionPayment']->amount,
+                    'status' => $studentData['admissionPayment']->status,
+                    'paid_at' => $studentData['admissionPayment']->paid_at,
+                    'payment_method' => $studentData['admissionPayment']->payment_method,
+
+                    'admission_name' =>
+                    $studentData['admissionPayment']
+                        ->admission?->name,
+                ]
+                : null,
+
         ], 201);
     }
     private function generateCustomId(int $gradeId): string

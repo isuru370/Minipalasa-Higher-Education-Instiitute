@@ -482,18 +482,23 @@ class StudentPaymentController extends Controller
                     'receipt_number',
                 ])
                 ->with([
-                    'student:id,custom_id,temporary_qr_code,initial_name,guardian_mobile,img_url',
-                    'enrollment:id,student_class_id',
+                    'student:id,custom_id,temporary_qr_code,initial_name,guardian_mobile,img_url,permanent_qr_active',
+                    'enrollment:id,student_class_id,class_category_fee_id', // Add class_category_fee_id
                     'enrollment.studentClass:id,class_name,grade_id,subject_id,teacher_id',
                     'enrollment.studentClass.grade:id,grade_name',
                     'enrollment.studentClass.subject:id,subject_name',
                     'enrollment.studentClass.teacher:id,initials',
+                    'enrollment.classCategoryFee:id,class_category_id,fee', // Load through enrollment
+                    'enrollment.classCategoryFee.category:id,category_name,code', // Load category
                 ])
                 ->where('status', 'completed')
                 ->whereDate('paid_at', $date->toDateString())
                 ->orderByDesc('paid_at')
                 ->get()
                 ->map(function ($payment) {
+                    // Get category from enrollment's classCategoryFee
+                    $category = $payment->enrollment?->classCategoryFee?->category;
+
                     return [
                         'payment' => [
                             'id' => $payment->id,
@@ -506,7 +511,9 @@ class StudentPaymentController extends Controller
                         ],
                         'student' => [
                             'id' => $payment->student?->id,
-                            'custom_id' => $payment->student?->permanent_qr_active == 1 ? $payment->student?->custom_id : $payment->student?->temporary_qr_code,
+                            'custom_id' => $payment->student?->permanent_qr_active == 1
+                                ? $payment->student?->custom_id
+                                : $payment->student?->temporary_qr_code,
                             'initial_name' => $payment->student?->initial_name,
                             'guardian_mobile' => $payment->student?->guardian_mobile,
                             'img_url' => $payment->student?->img_url,
@@ -527,6 +534,11 @@ class StudentPaymentController extends Controller
                                 'id' => $payment->enrollment?->studentClass?->teacher?->id,
                                 'initials' => $payment->enrollment?->studentClass?->teacher?->initials,
                             ],
+                            'category' => [
+                                'id' => $category?->id,
+                                'category_name' => $category?->category_name,
+                                'code' => $category?->code,
+                            ],
                         ],
                     ];
                 });
@@ -538,7 +550,6 @@ class StudentPaymentController extends Controller
                 'data' => $payments,
             ]);
         } catch (Throwable $e) {
-
             Log::error('Today Payments Fetch Error', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),

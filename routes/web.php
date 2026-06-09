@@ -808,6 +808,21 @@ Route::middleware([
             [MonthlyReportController::class, 'TeacherWithStudentPaymentReportPdf']
         )->name('teacher.student.payment.report.pdf');
 
+
+
+        Route::get(
+            '/reports/teacher-student-payment-date',
+            [MonthlyReportController::class, 'TeacherWithStudentPaymentDateReport']
+        )->name('teacher.student.payment.report');
+        Route::get(
+            '/reports/teacher-student-payment-date-excel',
+            [MonthlyReportController::class, 'TeacherWithStudentPaymentDateReportExcel']
+        )->name('teacher.student.payment.report.excel');
+        Route::get(
+            '/reports/teacher-student-payment-date-pdf',
+            [MonthlyReportController::class, 'TeacherWithStudentPaymentDateReportPdf']
+        )->name('teacher.student.payment.report.pdf');
+
         // Report Page
         Route::get(
             '/institute-reports',
