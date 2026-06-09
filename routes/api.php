@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\AdmissionPaymentController;
+use App\Http\Controllers\API\AdmissionPaymentController;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\ClassScheduleController;
 use App\Http\Controllers\API\GradeController;
