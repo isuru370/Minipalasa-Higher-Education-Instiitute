@@ -221,19 +221,46 @@ class StudentPaymentController extends Controller
                 'status' => 'success',
                 'message' => 'Payments saved successfully',
                 'data' => [
-                    'payments' => collect($createdPayments)->map(function ($payment) {
-                        return [
-                            'payment_id' => $payment->id,
-                            'receipt_number' => $payment->receipt_number,
-                            'reference_number' => $payment->reference_number,
-                            'payment_method' => $payment->payment_method,
-                            'payment_month' => Carbon::parse($payment->payment_month)->format('Y-m'),
-                            'paid_at' => $payment->paid_at?->format('Y-m-d H:i:s'),
-                            'note' => $payment->note,
-                            'guardian_mobile' => $payment->student?->guardian_mobile,
-                            'sms_queued' => (bool) $payment->student?->guardian_mobile,
-                        ];
-                    })->values(),
+                    'student' => [
+                        'id' => $createdPayments[0]->student?->id,
+                        'name' => $createdPayments[0]->student?->initial_name,
+                        'custom_id' => $createdPayments[0]->student?->permanent_qr_active == 1
+                            ? $createdPayments[0]->student?->custom_id
+                            : $createdPayments[0]->student?->temporary_qr_code,
+                        'guardian_mobile' => $createdPayments[0]->student?->guardian_mobile,
+                    ],
+
+                    'receipt' => [
+                        'payment_month' => Carbon::parse(
+                            $createdPayments[0]->payment_month
+                        )->format('Y-m'),
+
+                        'total_fee' => (float) collect($createdPayments)->sum('amount'),
+
+                        'discount_amount' => (float) collect($createdPayments)->sum('discount_amount'),
+
+                        'payable_total' => (float) collect($createdPayments)->sum('amount'),
+
+                        'items' => collect($createdPayments)->map(function ($payment) {
+                            return [
+                                'payment_id' => $payment->id,
+                                'receipt_number' => $payment->receipt_number,
+                                'reference_number' => $payment->reference_number,
+
+                                'class_name' => $payment->enrollment?->studentClass?->class_name,
+                                'subject' => $payment->enrollment?->studentClass?->subject?->subject_name,
+                                'category_name' => $payment->enrollment?->classCategoryFee?->category?->category_name,
+                                'grade' => $payment->enrollment?->studentClass?->grade?->grade_name,
+                                'teacher' => $payment->enrollment?->studentClass?->teacher?->initials,
+
+                                'amount' => (float) $payment->amount,
+                                'discount_amount' => (float) $payment->discount_amount,
+
+                                'paid_at' => $payment->paid_at?->format('Y-m-d H:i:s'),
+                            ];
+                        })->values(),
+                    ],
+
                     'count' => count($createdPayments),
                 ],
             ], 201);
