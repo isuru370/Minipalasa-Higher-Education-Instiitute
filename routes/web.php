@@ -19,8 +19,11 @@ use App\Http\Controllers\Admin\ClassScheduleController;
 use App\Http\Controllers\Admin\ClassTimeTableController;
 use App\Http\Controllers\Admin\DailyReportController;
 use App\Http\Controllers\Admin\DatabaseBackupController;
+use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\ExtraIncomeController;
+use App\Http\Controllers\Admin\FcmTokenController;
 use App\Http\Controllers\Admin\ForgotPasswordController;
+use App\Http\Controllers\Admin\GradeController;
 use App\Http\Controllers\Admin\ImageUploadController;
 use App\Http\Controllers\Admin\InstituteExpenseController;
 use App\Http\Controllers\Admin\InstituteIncomeController;
@@ -28,7 +31,9 @@ use App\Http\Controllers\Admin\InstitutePaymentReportController;
 use App\Http\Controllers\Admin\InstituteReportController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MonthlyReportController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ReceiptController;
+use App\Http\Controllers\Admin\StudentClassManagementController;
 use App\Http\Controllers\Admin\StudentIDCardController;
 use App\Http\Controllers\Admin\StudentImageController;
 use App\Http\Controllers\Admin\StudentPaymentController;
@@ -380,6 +385,23 @@ Route::middleware([
 
 
         /*
+|--------------------------------------------------------------------------
+| Grade Management
+|--------------------------------------------------------------------------
+*/
+
+        Route::resource(
+            'grades',
+            GradeController::class
+        );
+
+        Route::patch(
+            'grades/{grade}/toggle-active',
+            [GradeController::class, 'toggleActive']
+        )->name('grades.toggleActive');
+
+
+        /*
         |--------------------------------------------------------------------------
         | Class Categories
         |--------------------------------------------------------------------------
@@ -442,6 +464,21 @@ Route::middleware([
         */
         Route::get('class-schedules/category-view', [ClassScheduleController::class, 'categorySchedules'])
             ->name('class-schedules.categorySchedules');
+
+        Route::get(
+            'class-schedules/bulk-edit',
+            [ClassScheduleController::class, 'bulkEdit']
+        )->name('class-schedules.bulkEdit');
+
+        Route::put(
+            'class-schedules/patterns/{pattern}/bulk-update',
+            [ClassScheduleController::class, 'updateBulkSchedule']
+        )->name('class-schedules.updateBulkSchedule');
+
+        Route::get(
+            'class-schedules/patterns/{pattern}/edit',
+            [ClassScheduleController::class, 'editBulkSchedule']
+        )->name('class-schedules.editBulkSchedule');
 
         Route::resource(
             'class-schedules',
@@ -560,6 +597,121 @@ Route::middleware([
         Route::get('/attendance', function () {
             return view('admin.attendance.index');
         })->name('attendance.index');
+
+        /*
+|--------------------------------------------------------------------------
+| STUDENT EXAM
+|--------------------------------------------------------------------------
+*/
+
+        // Upcoming exams view
+        Route::get(
+            'exams/upcoming',
+            [ExamController::class, 'upcoming']
+        )->name('exams.upcoming');
+
+        // Exam counts for dashboard
+        Route::get(
+            'exams/counts',
+            [ExamController::class, 'counts']
+        )->name('exams.counts');
+
+        // Export Excel
+        Route::get(
+            'exams/export/excel',
+            [ExamController::class, 'exportExcel']
+        )->name('exams.export.excel');
+
+        // Export PDF
+        Route::get(
+            'exams/export/pdf',
+            [ExamController::class, 'exportPdf']
+        )->name('exams.export.pdf');
+
+        // Hall availability check (AJAX)
+        Route::get(
+            'exams/check-hall-availability',
+            [
+                ExamController::class,
+                'checkHallAvailability'
+            ]
+        )->name('exams.check-hall-availability');
+
+        // Get categories by class (AJAX)
+        Route::get(
+            'exams/get-categories',
+            [ExamController::class, 'getCategoriesByClass']
+        )->name('exams.get-categories');
+
+        // Resource routes
+        Route::resource(
+            'exams',
+            ExamController::class
+        )->except(['destroy']);
+
+        // Delete (soft delete)
+        Route::delete(
+            'exams/{exam}',
+            [ExamController::class, 'destroy']
+        )->name('exams.destroy');
+
+        // Cancel exam
+        Route::post(
+            'exams/{exam}/cancel',
+            [ExamController::class, 'cancel']
+        )->name('exams.cancel');
+
+        // Quick status update
+        Route::put(
+            'exams/{exam}/status',
+            [ExamController::class, 'updateStatus']
+        )->name('exams.update-status');
+
+        Route::get(
+            '/exams/search-classes',
+            [ExamController::class, 'searchClasses']
+        )->name('exams.search-classes');
+
+        /*
+|--------------------------------------------------------------------------
+| EXAM RESULTS / MARK ENTRY
+|--------------------------------------------------------------------------
+*/
+
+        // Mark entry page
+        Route::get(
+            'exams/{exam}/mark-entry',
+            [ExamController::class, 'markEntry']
+        )->name('exams.mark-entry');
+
+        // Save student marks
+        Route::post(
+            'exams/{exam}/save-marks',
+            [ExamController::class, 'saveMarks']
+        )->name('exams.save-marks');
+
+        // View exam results
+        Route::get(
+            'exams/{exam}/results',
+            [ExamController::class, 'results']
+        )->name('exams.results');
+
+        // Recalculate ranks
+        Route::post(
+            'exams/{exam}/recalculate-ranks',
+            [ExamController::class, 'recalculateRanks']
+        )->name('exams.recalculate-ranks');
+
+        Route::get(
+            'exams/{exam}/results/excel',
+            [ExamController::class, 'exportResultsExcel']
+        )->name('exams.results.excel');
+
+        Route::get(
+            'exams/{exam}/results/pdf',
+            [ExamController::class, 'exportResultsPdf']
+        )->name('exams.results.pdf');
+
 
         /*
         |--------------------------------------------------------------------------
@@ -878,9 +1030,9 @@ Route::middleware([
 |--------------------------------------------------------------------------
 */
 
-        Route::get('/activity-logs', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
-        Route::get('/activity-logs/export', [App\Http\Controllers\Admin\ActivityLogController::class, 'export'])->name('activity-logs.export');
-        Route::post('/activity-logs/clear', [App\Http\Controllers\Admin\ActivityLogController::class, 'clearOld'])->name('activity-logs.clear');
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('/activity-logs/export', [ActivityLogController::class, 'export'])->name('activity-logs.export');
+        Route::post('/activity-logs/clear', [ActivityLogController::class, 'clearOld'])->name('activity-logs.clear');
 
 
         /*
@@ -924,4 +1076,150 @@ Route::middleware([
             '/receipts/export/pdf',
             [ReceiptController::class, 'exportPdf']
         )->name('receipts.export.pdf');
+
+        // Notification Routes
+        Route::prefix('notifications')
+            ->name('notifications.')
+            ->group(function () {
+
+                // List all notifications
+                Route::get('/', [NotificationController::class, 'index'])
+                    ->name('index');
+
+                // Create notification
+                Route::get('/create', [NotificationController::class, 'create'])
+                    ->name('create');
+
+                // Store notification
+                Route::post('/', [NotificationController::class, 'store'])
+                    ->name('store');
+
+                // Bulk send notification
+                Route::post('/bulk', [NotificationController::class, 'sendBulk'])
+                    ->name('bulk');
+
+                // Show single notification
+                Route::get('/{id}', [NotificationController::class, 'show'])
+                    ->name('show');
+
+                // Mark as read
+                Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])
+                    ->name('mark-read');
+
+                // Mark all as read
+                Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])
+                    ->name('mark-all-read');
+
+                // Retry failed notification
+                Route::post('/{id}/retry', [NotificationController::class, 'retry'])
+                    ->name('retry');
+
+                // Cancel notification
+                Route::post('/{id}/cancel', [NotificationController::class, 'cancel'])
+                    ->name('cancel');
+
+                // Delete notification
+                Route::delete('/{id}', [NotificationController::class, 'destroy'])
+                    ->name('destroy');
+
+                // Delete old notifications
+                Route::delete('/cleanup', [NotificationController::class, 'deleteOld'])
+                    ->name('cleanup');
+
+                // Export notifications
+                Route::get('/export', [NotificationController::class, 'export'])
+                    ->name('export');
+            });
+
+        // ============================================
+        // FCM TOKEN ROUTES
+        // ============================================
+        Route::prefix('fcm-tokens')
+            ->name('fcm-tokens.')
+            ->group(function () {
+
+                // List all tokens
+                Route::get('/', [FcmTokenController::class, 'index'])
+                    ->name('index')
+                    ->middleware('permission:fcm-tokens.view');
+
+                // Show single token
+                Route::get('/{id}', [FcmTokenController::class, 'show'])
+                    ->name('show')
+                    ->middleware('permission:fcm-tokens.view');
+
+                // Student tokens
+                Route::get('/student/{studentId}', [FcmTokenController::class, 'studentTokens'])
+                    ->name('student')
+                    ->middleware('permission:fcm-tokens.view');
+
+                // Activate token
+                Route::post('/{id}/activate', [FcmTokenController::class, 'activate'])
+                    ->name('activate')
+                    ->middleware('permission:fcm-tokens.update');
+
+                // Deactivate token
+                Route::post('/{id}/deactivate', [FcmTokenController::class, 'deactivate'])
+                    ->name('deactivate')
+                    ->middleware('permission:fcm-tokens.update');
+
+                // Delete token
+                Route::delete('/{id}', [FcmTokenController::class, 'destroy'])
+                    ->name('destroy')
+                    ->middleware('permission:fcm-tokens.delete');
+
+                // Delete all inactive tokens
+                Route::delete('/inactive/delete', [FcmTokenController::class, 'deleteInactive'])
+                    ->name('delete-inactive')
+                    ->middleware('permission:fcm-tokens.delete');
+
+                // Export tokens
+                Route::get('/export', [FcmTokenController::class, 'export'])
+                    ->name('export')
+                    ->middleware('permission:fcm-tokens.view');
+
+                // Stats (AJAX)
+                Route::get('/stats', [FcmTokenController::class, 'stats'])
+                    ->name('stats');
+            });
+
+            Route::prefix('student-class-management')
+            ->name('student-class-management.')
+            ->controller(StudentClassManagementController::class)
+            ->group(function () {
+
+                // Main page
+                Route::get('/', 'index')->name('index');
+
+                // ✅ Search - Support both GET and POST
+                Route::match(['GET', 'POST'], '/search-student', 'searchStudentClasses')
+                    ->name('search');
+
+                // OR use ANY (supports all methods)
+                // Route::any('/search-student', 'searchStudentClasses')->name('search');
+
+                // Show student classes
+                Route::get('/student/{studentId}', 'showStudentClasses')->name('show');
+
+                // Toggle status - PUT
+                Route::put('/{enrollmentId}/toggle-status', 'toggleClassStatus')->name('toggle-status');
+
+                // Deactivate - PUT
+                Route::put('/{enrollmentId}/deactivate', 'deactivateClass')->name('deactivate');
+
+                // Activate - PUT
+                Route::put('/{enrollmentId}/activate', 'activateClass')->name('activate');
+
+                // Toggle all - PUT
+                Route::put('/student/{studentId}/toggle-all', 'toggleAllClassesStatus')->name('toggle-all');
+
+                // Assign form - GET
+                Route::get('/assign/{studentId?}', 'showAssignClassForm')->name('assign-form');
+
+                // Assign store - POST
+                Route::post('/assign', 'assignClassToStudent')->name('assign');
+
+                // Get category fees - GET (AJAX)
+                Route::get('/class/{classId}/category-fees', 'getCategoryFees')->name('get-category-fees');
+            });
     });
