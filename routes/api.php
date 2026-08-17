@@ -232,6 +232,11 @@ Route::middleware([
         [StudentAttendanceController::class, 'studentAttendanceHistory']
     );
 
+    Route::delete(
+        '/student-attendances/{attendanceId}',
+        [StudentAttendanceController::class, 'deleteAttendance']
+    )->name('api.student-attendances.delete');
+
     Route::post(
         'attendance/schedules',
         [AttendanceScheduleController::class, 'index']
@@ -300,6 +305,11 @@ Route::middleware([
         '/student-class-enrollments/toggle-status/{enrollmentId}',
         [StudentClassEnrollmentController::class, 'toggleClassStatusChange']
     );
+
+    Route::patch(
+        '/student-class-enrollments/{enrollmentId}/deactivate',
+        [StudentClassEnrollmentController::class, 'deactivateEnrollment']
+    )->name('api.student-class-enrollments.deactivate');
 
 
 
